@@ -1,0 +1,56 @@
+---
+import LanguagePicker from "@/components/LanguagePicker.astro";
+import Navigation from "@/components/Navigation.astro";
+import { locales, type Locale } from "@/i18n/locales";
+import { useTranslations } from "@/i18n/ui";
+import { getAlternatePaths, getLocale, localizePath } from "@/i18n/utils";
+
+interface Props {
+	title: string;
+	description?: string;
+	/**
+	 * URL of this page in each locale it exists in (used for hreflang).
+	 * Defaults to the same path under every locale prefix.
+	 */
+	alternates?: Partial<Record<Locale, string>>;
+	/** Where the language picker goes for a locale missing from `alternates`. */
+	fallbackPath?: string;
+}
+
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const {
+	title,
+	description = t("site.description"),
+	alternates = getAlternatePaths(Astro.url.pathname),
+	fallbackPath = "/",
+} = Astro.props;
+
+const languageLinks = Object.fromEntries(
+	locales.map((l) => [l, alternates[l] ?? localizePath(fallbackPath, l)]),
+) as Record<Locale, string>;
+---
+
+<html lang={locale}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		{Object.entries(alternates).map(([l, href]) => (
+			<link rel="alternate" hreflang={l} href={new URL(href, Astro.site)} />
+		))}
+		<title>{title}</title>
+	</head>
+	<body>
+		<header>
+			<Navigation locale={locale} />
+			<LanguagePicker locale={locale} alternates={languageLinks} />
+		</header>
+		<main>
+			<slot />
+		</main>
+	</body>
+</html>

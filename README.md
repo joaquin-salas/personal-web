@@ -1,43 +1,56 @@
-# Astro Starter Kit: Minimal
+# joaquinsalas.dev
+
+My personal portfolio and blog, built with [Astro](https://astro.build) and TypeScript, in English and Spanish.
+
+## Getting started
 
 ```sh
-pnpm create astro@latest -- --template minimal
+pnpm install
+pnpm dev      # http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Before committing: `pnpm check` (types + formatting). `pnpm format` fixes formatting.
 
-## 🚀 Project Structure
+## Where to change things
 
-Inside of your Astro project, you'll see the following folders and files:
+| I want to…                        | Edit                                           |
+| --------------------------------- | ---------------------------------------------- |
+| Write a blog post                 | `src/content/blog/<slug>/en.md` and/or `es.md` |
+| Change my name, tagline, links    | `src/data/profile.ts`                          |
+| Add or edit a job                 | `src/data/experience.ts`                       |
+| Add or edit a degree              | `src/data/education.ts`                        |
+| Add or edit a project             | `src/data/projects.ts`                         |
+| Change a label, heading or button | `src/i18n/ui.ts` (both languages)              |
+| Add a file with a fixed URL (CV)  | `public/` (e.g. `public/cv.pdf` → `/cv.pdf`)   |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+### Writing a post
+
+Each post is a folder; the folder name is the URL. Put images for the post in the same folder.
+
+```
+src/content/blog/my-first-project/
+├── en.md      → /blog/my-first-project/
+├── es.md      → /es/blog/my-first-project/   (optional translation)
+└── cover.png
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+```md
+---
+title: "My first project"
+description: "One sentence shown in lists and search results."
+pubDate: 2026-10-17
+tags: ["astro", "typescript"]
+cover:
+  src: ./cover.png
+  alt: "Describe the image"
+draft: true # remove when ready to publish
+---
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Start with text or a `##` heading — the title is rendered for you.
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+The build fails with a clear message if a required field is missing or has the wrong type.
 
-## 🧞 Commands
+## Architecture
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+See [AGENTS.md](./AGENTS.md) for the full project structure and conventions.

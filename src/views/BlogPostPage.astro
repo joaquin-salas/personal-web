@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import TagList from "@/components/TagList.astro";
+import { useTranslations } from "@/i18n/ui";
+import { formatDate, getLocale } from "@/i18n/utils";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPostAlternates, type BlogPost } from "@/lib/blog";
+
+interface Props {
+	post: BlogPost;
+}
+
+const { post } = Astro.props;
+const locale = getLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const { title, description, pubDate, updatedDate, author, cover, tags } = post.data;
+const { Content } = await render(post);
+const alternates = await getPostAlternates(post);
+---
+
+<BaseLayout title={title} description={description} alternates={alternates} fallbackPath="/blog/">
+	<article>
+		<h1>{title}</h1>
+		<p>
+			<time datetime={pubDate.toISOString()}>{formatDate(pubDate, locale)}</time>
+			{updatedDate && (
+				<>
+					· {t("blog.updated")}{" "}
+					<time datetime={updatedDate.toISOString()}>{formatDate(updatedDate, locale)}</time>
+				</>
+			)}
+			· {author}
+		</p>
+
+		{cover && <Image src={cover.src} alt={cover.alt} />}
+
+		<Content />
+
+		<TagList tags={tags} label={t("blog.tags")} />
+	</article>
+</BaseLayout>
