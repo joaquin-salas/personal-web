@@ -1,15 +1,18 @@
 ---
+import ArticleCard from "@/components/ArticleCard.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
 import Section from "@/components/Section.astro";
 import TagList from "@/components/TagList.astro";
 import { education } from "@/data/education";
 import { experience } from "@/data/experience";
 import { profile } from "@/data/profile";
-import { projects } from "@/data/projects";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getPosts, getPostUrl } from "@/lib/blog";
-import { formatDate, formatPeriod } from "@/lib/dates";
+import { getArticles } from "@/lib/articles";
+import { formatPeriod } from "@/lib/dates";
+import { getFeaturedProjects } from "@/lib/projects";
 
-const latestPosts = (await getPosts()).slice(0, 3);
+const featuredProjects = await getFeaturedProjects();
+const latestArticles = (await getArticles()).slice(0, 4);
 ---
 
 <BaseLayout title={`${profile.name} — ${profile.role}`} description={profile.tagline}>
@@ -54,20 +57,6 @@ const latestPosts = (await getPosts()).slice(0, 3);
 		</ol>
 	</Section>
 
-	<Section id="projects" title="Projects">
-		<ul>
-			{projects.map((project) => (
-				<li>
-					<h3>{project.title}</h3>
-					<p>{project.description}</p>
-					<TagList tags={project.stack} label="Technologies" />
-					{project.repo && <a href={project.repo}>Code</a>}
-					{project.demo && <a href={project.demo}>Live demo</a>}
-				</li>
-			))}
-		</ul>
-	</Section>
-
 	<Section id="education" title="Education">
 		<ul>
 			{education.map((item) => (
@@ -83,17 +72,29 @@ const latestPosts = (await getPosts()).slice(0, 3);
 		</ul>
 	</Section>
 
-	{latestPosts.length > 0 && (
-		<Section id="writing" title="Latest writing">
+	{featuredProjects.length > 0 && (
+		<Section id="projects" title="Projects">
 			<ul>
-				{latestPosts.map((post) => (
+				{featuredProjects.map((project) => (
 					<li>
-						<a href={getPostUrl(post)}>{post.data.title}</a>
-						<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+						<ProjectCard project={project} />
 					</li>
 				))}
 			</ul>
-			<a href="/blog/">All posts →</a>
+			<a href="/projects/">All projects →</a>
+		</Section>
+	)}
+
+	{latestArticles.length > 0 && (
+		<Section id="articles" title="Articles">
+			<ul>
+				{latestArticles.map((article) => (
+					<li>
+						<ArticleCard article={article} />
+					</li>
+				))}
+			</ul>
+			<a href="/articles/">All articles →</a>
 		</Section>
 	)}
 

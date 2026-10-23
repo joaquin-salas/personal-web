@@ -5,13 +5,12 @@ e.g. Kubernetes, Kafka, Wazuh) and write-ups of projects I've built. Static Astr
 written in TypeScript and styled with Tailwind CSS. Self-hosted on an Oracle Cloud instance behind a
 reverse proxy. There is no backend and no database: everything is built to static HTML in `dist/`.
 
-> **Migration in progress.** This file describes the _target_ architecture. The code still has
-> leftovers from an earlier setup (a `blog` collection at `/blog/`, `src/data/projects.ts`). Follow
-> this document, not the old code, and remove leftovers as part of the migration steps:
+> **Migration in progress.** This file describes the _target_ architecture. Styling and the final
+> home page layout are not built yet. Follow this document, not the current code:
 >
 > 1. ~~Rewrite this file~~
 > 2. ~~Remove i18n and restructure folders~~
-> 3. `articles` and `projects` collections + their pages
+> 3. ~~`articles` and `projects` collections + their pages~~
 > 4. Tailwind, base layout and home page
 
 ## Principles

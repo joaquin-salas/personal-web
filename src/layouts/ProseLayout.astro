@@ -1,0 +1,40 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate } from "@/lib/dates";
+
+// Reading page shared by articles and projects. The Markdown body goes in the default slot;
+// page-specific details (tags, stack, links) go in the `meta` slot under the dates.
+
+interface Props {
+	title: string;
+	description: string;
+	pubDate: Date;
+	updatedDate?: Date;
+	cover?: { src: ImageMetadata; alt: string };
+}
+
+const { title, description, pubDate, updatedDate, cover } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<article>
+		<header>
+			<a href="/">← Joaquín Salas</a>
+			<h1>{title}</h1>
+			<p>
+				<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+				{updatedDate && (
+					<>
+						· Updated <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+					</>
+				)}
+			</p>
+			<slot name="meta" />
+			{cover && <Image src={cover.src} alt={cover.alt} />}
+		</header>
+
+		<slot />
+	</article>
+</BaseLayout>

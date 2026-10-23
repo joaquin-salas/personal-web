@@ -1,6 +1,7 @@
 # joaquinsalas.dev
 
-My personal portfolio and blog, built with [Astro](https://astro.build) and TypeScript.
+My personal portfolio: CV, technical articles and project write-ups. Built with
+[Astro](https://astro.build) and TypeScript.
 
 ## Getting started
 
@@ -15,29 +16,29 @@ Before committing: `pnpm check` (types + formatting). `pnpm format` fixes format
 
 | I want to…                       | Edit                                         |
 | -------------------------------- | -------------------------------------------- |
-| Write a blog post                | `src/content/blog/<slug>/index.md`           |
+| Write an article                 | `src/content/articles/<slug>/index.md`       |
+| Write up a project               | `src/content/projects/<slug>/index.md`       |
 | Change my name, tagline, links   | `src/data/profile.ts`                        |
 | Add or edit a job                | `src/data/experience.ts`                     |
 | Add or edit a degree             | `src/data/education.ts`                      |
-| Add or edit a project            | `src/data/projects.ts`                       |
 | Add a file with a fixed URL (CV) | `public/` (e.g. `public/cv.pdf` → `/cv.pdf`) |
 
-### Writing a post
+### Writing an article
 
-Each post is a folder; the folder name is the URL. Put images for the post in the same folder.
+Each article is a folder; the folder name is the URL. Put images for the article in the same folder.
 
 ```
-src/content/blog/my-first-project/
-├── index.md   → /blog/my-first-project/
+src/content/articles/kafka-consumer-groups/
+├── index.md   → /articles/kafka-consumer-groups/
 └── cover.png
 ```
 
 ```md
 ---
-title: "My first project"
+title: "How Kafka consumer groups work"
 description: "One sentence shown in lists and search results."
 pubDate: 2026-10-17
-tags: ["astro", "typescript"]
+tags: ["kafka", "distributed-systems"]
 cover:
   src: ./cover.png
   alt: "Describe the image"
@@ -47,7 +48,24 @@ draft: true # remove when ready to publish
 Start with text or a `##` heading — the title is rendered for you.
 ```
 
-The build fails with a clear message if a required field is missing or has the wrong type.
+### Writing up a project
+
+Same idea, in `src/content/projects/<slug>/index.md` → `/projects/<slug>/`:
+
+```md
+---
+title: "Wazuh home lab"
+description: "One sentence shown in lists and search results."
+pubDate: 2026-10-17
+stack: ["Wazuh", "Docker", "Linux"]
+repo: "https://github.com/…" # optional
+demo: "https://…" # optional
+featured: true # show it on the home page
+---
+```
+
+The build fails with a clear message if a required field is missing or has the wrong type. See
+[AGENTS.md](./AGENTS.md) for every field.
 
 ## Architecture
 

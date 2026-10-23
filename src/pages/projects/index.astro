@@ -1,0 +1,23 @@
+---
+import ProjectCard from "@/components/ProjectCard.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getProjects } from "@/lib/projects";
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Projects — Joaquín Salas" description="Projects built by Joaquín Salas">
+	<h1>Projects</h1>
+
+	{projects.length === 0 ? (
+		<p>No projects yet.</p>
+	) : (
+		<ul>
+			{projects.map((project) => (
+				<li>
+					<ProjectCard project={project} />
+				</li>
+			))}
+		</ul>
+	)}
+</BaseLayout>

@@ -1,0 +1,20 @@
+---
+import TagList from "@/components/TagList.astro";
+import { getProjectUrl, type Project } from "@/lib/projects";
+
+interface Props {
+	project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, stack, draft } = project.data;
+---
+
+<article>
+	<h3>
+		<a href={getProjectUrl(project)}>{title}</a>
+		{draft && <span>(draft)</span>}
+	</h3>
+	<p>{description}</p>
+	<TagList tags={stack} label="Technologies" />
+</article>

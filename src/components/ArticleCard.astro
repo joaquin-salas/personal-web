@@ -1,0 +1,20 @@
+---
+import { getArticleUrl, type Article } from "@/lib/articles";
+import { formatDate } from "@/lib/dates";
+
+interface Props {
+	article: Article;
+}
+
+const { article } = Astro.props;
+const { title, description, pubDate, draft } = article.data;
+---
+
+<article>
+	<h3>
+		<a href={getArticleUrl(article)}>{title}</a>
+		{draft && <span>(draft)</span>}
+	</h3>
+	<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+	<p>{description}</p>
+</article>

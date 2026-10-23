@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { render } from "astro:content";
+import TagList from "@/components/TagList.astro";
+import ProseLayout from "@/layouts/ProseLayout.astro";
+import { getArticles } from "@/lib/articles";
+
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+---
+
+<ProseLayout {...article.data}>
+	<TagList slot="meta" tags={article.data.tags} label="Tags" />
+	<Content />
+</ProseLayout>
