@@ -204,7 +204,8 @@ public/                       Copied as-is to the site root (favicon.svg, cv.pdf
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`, `content:` (new
   or edited articles, projects or CV data). Example: `feat(home): add experience section`.
-- Work on short-lived branches (`feat/...`, `fix/...`, `content/...`) and merge into `main`.
+- Commit directly to `main`: this is a single-person project. Don't create branches unless the
+  owner explicitly asks for one.
 - `pnpm check` must pass before committing.
 
 ## Common tasks
