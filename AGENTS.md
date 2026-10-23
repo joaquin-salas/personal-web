@@ -210,6 +210,8 @@ public/                       Copied as-is to the site root (favicon.svg, cv.pdf
   or edited articles, projects or CV data). Example: `feat(home): add experience section`.
 - Commit directly to `main`: this is a single-person project. Don't create branches unless the
   owner explicitly asks for one.
+- Don't commit or push on your own. Leave changes uncommitted so the owner can review them, and
+  commit (or push) only when asked.
 - `pnpm check` must pass before committing.
 
 ## Common tasks
