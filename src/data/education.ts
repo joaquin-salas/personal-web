@@ -1,32 +1,23 @@
 // Degrees and courses, newest first.
-// Edit content here, not in the markup. Text shown to visitors is written once per
-// language: `{ en: "...", es: "..." }`. Anything marked TODO is a placeholder.
-
-import type { Translated } from "@/i18n/locales";
+// Edit content here, not in the markup. Anything marked TODO is a placeholder.
 
 export interface Education {
-	degree: Translated;
-	institution: Translated;
-	location: Translated;
+	degree: string;
+	institution: string;
+	location: string;
 	/** `"YYYY"` or `"YYYY-MM"`. */
 	start: string;
 	end: string;
-	details?: Translated;
+	details?: string;
 }
 
 export const education: Education[] = [
 	{
-		degree: {
-			en: "BSc in Computer Engineering",
-			es: "Grado en Ingeniería Informática",
-		},
-		institution: {
-			en: "University of Granada (UGR)",
-			es: "Universidad de Granada (UGR)",
-		},
-		location: { en: "Granada, Spain", es: "Granada, España" },
+		degree: "BSc in Computer Engineering",
+		institution: "University of Granada (UGR)",
+		location: "Granada, Spain",
 		start: "TODO",
 		end: "TODO",
-		// details: { en: "Final-year project: TODO", es: "Trabajo Fin de Grado: TODO" },
+		// details: "Final-year project: TODO",
 	},
 ];

@@ -1,5 +1,25 @@
 ---
-import BlogIndexPage from "@/views/BlogIndexPage.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPosts, getPostUrl } from "@/lib/blog";
+import { formatDate } from "@/lib/dates";
+
+const posts = await getPosts();
 ---
 
-<BlogIndexPage />
+<BaseLayout title="Blog" description="Articles and notes by Joaquín Salas">
+	<h1>Blog</h1>
+
+	{posts.length === 0 ? (
+		<p>No posts yet.</p>
+	) : (
+		<ul>
+			{posts.map((post) => (
+				<li>
+					<a href={getPostUrl(post)}>{post.data.title}</a>
+					<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+					{post.data.draft && <span>(draft)</span>}
+				</li>
+			))}
+		</ul>
+	)}
+</BaseLayout>

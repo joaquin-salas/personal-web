@@ -6,12 +6,11 @@ written in TypeScript and styled with Tailwind CSS. Self-hosted on an Oracle Clo
 reverse proxy. There is no backend and no database: everything is built to static HTML in `dist/`.
 
 > **Migration in progress.** This file describes the _target_ architecture. The code still has
-> leftovers from an earlier setup (`src/i18n/`, `src/views/`, `src/pages/es/`, a `blog` collection,
-> `src/data/projects.ts`). Follow this document, not the old code, and remove leftovers as part of
-> the migration steps:
+> leftovers from an earlier setup (a `blog` collection at `/blog/`, `src/data/projects.ts`). Follow
+> this document, not the old code, and remove leftovers as part of the migration steps:
 >
 > 1. ~~Rewrite this file~~
-> 2. Remove i18n and restructure folders
+> 2. ~~Remove i18n and restructure folders~~
 > 3. `articles` and `projects` collections + their pages
 > 4. Tailwind, base layout and home page
 

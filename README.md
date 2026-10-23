@@ -1,6 +1,6 @@
 # joaquinsalas.dev
 
-My personal portfolio and blog, built with [Astro](https://astro.build) and TypeScript, in English and Spanish.
+My personal portfolio and blog, built with [Astro](https://astro.build) and TypeScript.
 
 ## Getting started
 
@@ -13,15 +13,14 @@ Before committing: `pnpm check` (types + formatting). `pnpm format` fixes format
 
 ## Where to change things
 
-| I want to…                        | Edit                                           |
-| --------------------------------- | ---------------------------------------------- |
-| Write a blog post                 | `src/content/blog/<slug>/en.md` and/or `es.md` |
-| Change my name, tagline, links    | `src/data/profile.ts`                          |
-| Add or edit a job                 | `src/data/experience.ts`                       |
-| Add or edit a degree              | `src/data/education.ts`                        |
-| Add or edit a project             | `src/data/projects.ts`                         |
-| Change a label, heading or button | `src/i18n/ui.ts` (both languages)              |
-| Add a file with a fixed URL (CV)  | `public/` (e.g. `public/cv.pdf` → `/cv.pdf`)   |
+| I want to…                       | Edit                                         |
+| -------------------------------- | -------------------------------------------- |
+| Write a blog post                | `src/content/blog/<slug>/index.md`           |
+| Change my name, tagline, links   | `src/data/profile.ts`                        |
+| Add or edit a job                | `src/data/experience.ts`                     |
+| Add or edit a degree             | `src/data/education.ts`                      |
+| Add or edit a project            | `src/data/projects.ts`                       |
+| Add a file with a fixed URL (CV) | `public/` (e.g. `public/cv.pdf` → `/cv.pdf`) |
 
 ### Writing a post
 
@@ -29,8 +28,7 @@ Each post is a folder; the folder name is the URL. Put images for the post in th
 
 ```
 src/content/blog/my-first-project/
-├── en.md      → /blog/my-first-project/
-├── es.md      → /es/blog/my-first-project/   (optional translation)
+├── index.md   → /blog/my-first-project/
 └── cover.png
 ```
 
