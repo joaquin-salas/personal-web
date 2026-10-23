@@ -1,8 +1,28 @@
 # joaquinsalas.dev
 
-Personal portfolio and blog of Joaquín Salas. Static Astro site, bilingual (English/Spanish),
-written in TypeScript, self-hosted on an Oracle Cloud instance behind a reverse proxy.
-There is no backend and no database: everything is built to static HTML in `dist/`.
+Personal portfolio of Joaquín Salas: a CV-style home page, technical articles (things I'm learning,
+e.g. Kubernetes, Kafka, Wazuh) and write-ups of projects I've built. Static Astro site in English,
+written in TypeScript and styled with Tailwind CSS. Self-hosted on an Oracle Cloud instance behind a
+reverse proxy. There is no backend and no database: everything is built to static HTML in `dist/`.
+
+> **Migration in progress.** This file describes the _target_ architecture. The code still has
+> leftovers from an earlier setup (`src/i18n/`, `src/views/`, `src/pages/es/`, a `blog` collection,
+> `src/data/projects.ts`). Follow this document, not the old code, and remove leftovers as part of
+> the migration steps:
+>
+> 1. ~~Rewrite this file~~
+> 2. Remove i18n and restructure folders
+> 3. `articles` and `projects` collections + their pages
+> 4. Tailwind, base layout and home page
+
+## Principles
+
+- **Keep it simple.** Build only what is needed now. Don't add features, abstractions or
+  dependencies "for later". See [Out of scope](#out-of-scope-for-now).
+- **Layers are independent.** Content never knows how it's displayed; styling never lives in
+  content. Redesigning the site must not require touching a Markdown file.
+- **Every file has an obvious place.** If something doesn't fit the structure below, ask before
+  inventing a new folder.
 
 ## Commands
 
@@ -26,89 +46,142 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Architecture
+
+The site is a build-time pipeline with three layers. Each layer only depends on the one before it:
+
+```
+CONTENT (what)              LOGIC (how to find it)      PRESENTATION (how it looks)     OUTPUT
+src/content/**/*.md   ──►   src/lib/*.ts          ──►   pages, layouts, components ──►  dist/*.html
+src/data/*.ts               queries, sorting, URLs      Tailwind classes live here
+```
+
+- **Content**: Markdown (articles, projects) and typed TS data (CV). No logic, no styling.
+- **Logic**: plain TypeScript functions such as `getArticles()` or `getFeaturedProjects()`. No markup.
+- **Presentation**: Astro pages, layouts and components. They ask `src/lib/` for data and render it.
+
+## Site map
+
+| URL                 | Page                                                       |
+| ------------------- | ---------------------------------------------------------- |
+| `/`                 | Home: CV + featured projects + latest articles (see below) |
+| `/articles/`        | All articles, newest first                                 |
+| `/articles/<slug>/` | One article                                                |
+| `/projects/`        | All projects                                               |
+| `/projects/<slug>/` | One project write-up (a single page, like an article)      |
+| `/cv.pdf`           | Downloadable CV (static file in `public/`)                 |
+
+### Home page
+
+A two-column layout on desktop: the left column is sticky, the right one scrolls. On mobile it
+collapses to a single column. The structure is inspired by brittanychiang.com, but the visual design
+(colors, typography, details) must be our own.
+
+| Section               | Shows                                                                 | Data source                       |
+| --------------------- | --------------------------------------------------------------------- | --------------------------------- |
+| Header (left, sticky) | Name, role, tagline, in-page nav (About, Experience, …), social links | `src/data/profile.ts`             |
+| About                 | A few paragraphs                                                      | `src/data/profile.ts`             |
+| Experience            | Dates, role · company, description, tech tags + "View full CV" link   | `src/data/experience.ts`          |
+| Education             | Degree, school, dates                                                 | `src/data/education.ts`           |
+| Projects              | Featured projects (cover, title, description, stack) + "All projects" | `projects` collection, `featured` |
+| Articles              | Latest 3–4 articles (year, title, cover) + "All articles"             | `articles` collection             |
+| Footer                | Short credits                                                         | —                                 |
+
+Article and project pages use a single-column reading layout with a link back to the home page.
+
 ## Project structure
 
 ```
 src/
-├── pages/            Routing only. Thin wrappers that render a view. One file per URL, per locale.
+├── content/                  Markdown content (content collections). No styling.
+│   ├── articles/<slug>/index.md   One folder per article; its images live next to it.
+│   └── projects/<slug>/index.md   One folder per project; its images live next to it.
+├── content.config.ts         Collection schemas (frontmatter is validated at build time).
+├── data/                     CV data as typed TS: profile.ts, experience.ts, education.ts.
+├── lib/                      Logic with no markup: articles.ts, projects.ts (queries, sorting, URLs).
+├── pages/                    One file per URL. Fetch data from src/lib/ and compose components.
 │   ├── index.astro               → /
-│   ├── blog/index.astro          → /blog/
-│   ├── blog/[...slug].astro      → /blog/<slug>/
-│   └── es/…                      → same routes under /es/
-├── views/            Full page templates, shared by all locales (HomePage, BlogIndexPage, …).
-├── layouts/          HTML shell: <head>, SEO/hreflang tags, header, <main>. (BaseLayout)
-├── components/       Reusable UI pieces with typed Props (Section, TagList, Navigation, …).
-├── content/          Long-form Markdown/MDX content (content collections).
-│   └── blog/<slug>/<locale>.md   One folder per post; images live next to the .md files.
-├── content.config.ts Collection schemas (frontmatter is validated at build time).
-├── data/             Structured CV data as typed TS: profile, experience, education, projects.
-├── i18n/             Locales, UI strings and locale/path/date helpers.
-│   ├── locales.ts                Supported locales, default locale, `Translated<T>` type.
-│   ├── ui.ts                     Every UI string (labels, headings, buttons) in every language.
-│   └── utils.ts                  localizePath, getLocale, formatDate, formatYearMonth, …
-└── lib/              Domain logic with no markup (e.g. blog.ts: querying posts, slugs, URLs).
-public/               Copied as-is to the site root (favicon, cv.pdf, robots.txt). Not optimized.
+│   ├── articles/index.astro      → /articles/
+│   ├── articles/[slug].astro     → /articles/<slug>/
+│   ├── projects/index.astro      → /projects/
+│   └── projects/[slug].astro     → /projects/<slug>/
+├── layouts/                  BaseLayout (<html lang="en">, <head>, SEO, global CSS) and
+│                             ProseLayout (single-column reading page for articles/projects).
+├── components/               Reusable UI with typed Props: ArticleCard, ProjectCard,
+│                             ExperienceItem, SocialLinks, SectionNav, TagList, …
+├── assets/                   Images used by components (optimized by Astro).
+└── styles/global.css         Tailwind import + design tokens (`@theme`): colors, fonts, spacing.
+public/                       Copied as-is to the site root (favicon, cv.pdf, robots.txt).
 ```
 
 ### Where does new code go?
 
-- A new URL → a view in `src/views/` + one thin wrapper per locale in `src/pages/`.
+- A new URL → a file in `src/pages/`.
 - Markup used in more than one place, or a self-contained block → `src/components/`.
-- Logic without markup (queries, transformations) → `src/lib/` (domain) or `src/i18n/` (locale-related).
-- CV-style structured data → `src/data/`. Articles or anything with a long body → `src/content/`.
-- Images used by a post → inside that post's folder. Images used by components → `src/assets/`.
+- Logic without markup (queries, sorting, URL building, date formatting) → `src/lib/`.
+- CV-style structured data → `src/data/`. Anything with a long body → `src/content/`.
+- Images used by an article/project → inside its folder. Images used by components → `src/assets/`.
   Files that must keep an exact URL (cv.pdf, favicon, robots.txt) → `public/`.
+
+## Content
+
+### Articles and projects
+
+- Path: `src/content/articles/<slug>/index.md` or `src/content/projects/<slug>/index.md` (`.mdx` is
+  fine when a post needs components). The folder name is the URL slug.
+- Slugs are lowercase kebab-case and never change once published (they are URLs).
+- Frontmatter is validated by `src/content.config.ts`:
+
+| Field         | Articles | Projects | Notes                                              |
+| ------------- | -------- | -------- | -------------------------------------------------- |
+| `title`       | required | required |                                                    |
+| `description` | required | required | One or two sentences; used in cards and `<meta>`.  |
+| `pubDate`     | required | required |                                                    |
+| `updatedDate` | optional | optional |                                                    |
+| `tags`        | optional | —        | e.g. `["kubernetes", "networking"]`                |
+| `stack`       | —        | required | Technologies used, e.g. `["Go", "Kafka"]`          |
+| `repo`        | —        | optional | URL                                                |
+| `demo`        | —        | optional | URL                                                |
+| `featured`    | —        | optional | `true` shows the project on the home page          |
+| `cover`       | optional | optional | `{ src: ./cover.png, alt: "…" }`, used for cards   |
+| `draft`       | optional | optional | `true` shows it in `pnpm dev` only, never in build |
+
+- Don't repeat the title as `# Heading` in the body; the page renders it. Start sections at `##`.
+- No HTML with classes and no Tailwind in content. If a post needs a visual element (callout,
+  diagram), create a component and use it from `.mdx`.
+
+### CV data (`src/data/`)
+
+- Each file exports an `interface` next to the data so content is type-checked.
+- Edit text here, never in markup.
 
 ## Conventions
 
 ### TypeScript
 
 - Everything is TypeScript (strict). No `.js`/`.mjs` files. No `any`.
-- Every component declares `interface Props`, even if empty-ish. Prefer required props over defaults
-  that hide mistakes.
+- Every component declares `interface Props`. Prefer required props over defaults that hide mistakes.
 - Import with the `@/` alias (`import BaseLayout from "@/layouts/BaseLayout.astro"`), never `../../`.
-  Exception: sibling files in the same folder (`./locales`).
-- Data files export an `interface` next to the data so content is type-checked.
+  Exception: sibling files in the same folder.
 
-### i18n (most important rule)
+### Styling (Tailwind)
 
-Locales: `en` (default, no URL prefix) and `es` (under `/es/`). Defined in `src/i18n/locales.ts`.
+- Tailwind CSS via its Vite plugin; prose (Markdown bodies) styled with `@tailwindcss/typography`.
+- Design tokens (colors, fonts) are defined once in `src/styles/global.css` with `@theme`. Use
+  token-based classes (`bg-background`, `text-accent`), not raw values (`bg-[#0a192f]`).
+- Tailwind classes live only in components, layouts and pages, never in `src/content/` or
+  `src/data/`.
+- Markdown bodies are styled in one place: the `prose` wrapper in `ProseLayout`.
+- No custom CSS files besides `global.css` unless Tailwind truly can't express something.
 
-- **Never hardcode user-visible text in markup.** Every string comes from one of:
-  - `src/i18n/ui.ts` for UI strings → `const t = useTranslations(locale); t("home.about")`
-  - `src/data/*.ts` for CV content → `Translated` fields, read as `field[locale]`
-  - `src/content/` for articles
-- Adding a UI string: add the key to `en` **and** `es` in `ui.ts` (the type forces both).
-  Keys are namespaced by area: `nav.*`, `home.*`, `blog.*`, …
-- Get the current locale with `getLocale(Astro.currentLocale)` in views/layouts; pass `locale` as a
-  prop to components that need it.
-- Internal links always go through `localizePath("/path/", locale)`. Never write `/es/...` by hand.
-- Dates: `formatDate(date, locale)` / `formatYearMonth("2026-01", locale)`. Never `toLocaleString()` ad hoc.
-- Every page exists in every locale. Adding a page means adding a wrapper under `src/pages/` and
-  `src/pages/es/`.
-- Blog posts may exist in only one language; the language picker falls back to that locale's blog
-  index, and hreflang only lists real translations.
+### Markup and accessibility
 
-### Content (blog)
-
-- Path: `src/content/blog/<slug>/<locale>.md` (or `.mdx`). The folder name is the URL:
-  `src/content/blog/my-post/es.md` → `/es/blog/my-post/`.
-- Slugs are lowercase kebab-case, in English, and never change once published (they are URLs).
-  A translation uses the same folder.
-- Frontmatter is validated by `src/content.config.ts`. Required: `title`, `description`, `pubDate`.
-  Optional: `updatedDate`, `cover` (`{ src: ./cover.png, alt: "…" }`), `tags`, `draft`.
-- `draft: true` shows the post in `pnpm dev` only.
-- Don't repeat the title as `# Heading` in the body; the template renders it. Start body sections at `##`.
-
-### Components and styling
-
-- Components are PascalCase (`TagList.astro`); TS modules are lowercase (`blog.ts`, `utils.ts`).
-- Use semantic HTML and accessible markup: landmarks (`header`, `nav`, `main`), one `<h1>` per page,
-  `aria-label` on lists/navs that need a name, `alt` on every image, `<time datetime>` for dates.
+- Components are PascalCase (`ArticleCard.astro`); TS modules are lowercase (`articles.ts`).
+- Semantic HTML: landmarks (`header`, `nav`, `main`, `footer`), one `<h1>` per page, `aria-label`
+  on navs/lists that need a name, `alt` on every image, `<time datetime>` for dates.
 - Use Astro's `<Image />` from `astro:assets` for images in `src/`, not raw `<img>`.
-- Styling approach: not decided yet (pending). Until then, don't add styles.
-- No client-side JavaScript unless a feature truly needs it. If it does, prefer a small `<script>` in
-  the component; add a UI framework integration only when an interactive island justifies it.
+- No client-side JavaScript unless a feature truly needs it. If it does, use a small `<script>` in
+  the component. No UI framework (React, Vue, …).
 
 ### Formatting
 
@@ -118,29 +191,37 @@ Locales: `en` (default, no URL prefix) and `es` (under `/es/`). Defined in `src/
 ### Git
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`, `content:` (new
-  or edited posts/data). Example: `feat(i18n): add language picker`.
+  or edited articles, projects or CV data). Example: `feat(home): add experience section`.
 - Work on short-lived branches (`feat/...`, `fix/...`, `content/...`) and merge into `main`.
 - `pnpm check` must pass before committing.
 
 ## Common tasks
 
-- **Write a post:** create `src/content/blog/<slug>/en.md` (and/or `es.md`) with the frontmatter above.
-- **Edit CV content:** the matching file in `src/data/` (`profile`, `experience`, `education`, `projects`).
-- **Add a UI string:** `src/i18n/ui.ts`, both languages.
-- **Add a page:** view in `src/views/`, wrappers in `src/pages/` and `src/pages/es/`, nav link in
-  `src/components/Navigation.astro` + its label in `ui.ts`.
-- **Add a language:** add it to `locales` in `src/i18n/locales.ts`, fill every `Translated` value
-  and `ui.ts` (type errors will list them), add `src/pages/<locale>/` wrappers.
+- **Write an article:** create `src/content/articles/<slug>/index.md` with the frontmatter above.
+- **Write up a project:** create `src/content/projects/<slug>/index.md`; add `featured: true` to show
+  it on the home page.
+- **Edit CV content:** the matching file in `src/data/`. Replace `public/cv.pdf` for the PDF.
+- **Change the look:** tokens in `src/styles/global.css`, or classes in the relevant component.
+- **Add a page:** a file in `src/pages/` and, if it should be reachable, a link in the relevant nav.
+
+## Out of scope (for now)
+
+Don't build these unless explicitly asked. They can be added later without changing the
+architecture:
+
+- Translations / i18n (the site is English only; visitors can use the browser's translator).
+- Article series, project dev-logs (multi-page projects), tag pages.
+- Highlighting the active section in the home nav while scrolling.
+- RSS, sitemap, search, comments, analytics, dark-mode toggle.
 
 ## Documentation
 
-Full documentation: https://docs.astro.build
+Full documentation: https://docs.astro.build · https://tailwindcss.com/docs
 
 Consult these guides before working on related tasks:
 
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
+- [Adding pages and dynamic routes](https://docs.astro.build/en/guides/routing/)
 - [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
+- [Images](https://docs.astro.build/en/guides/images/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
