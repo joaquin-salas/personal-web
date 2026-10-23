@@ -1,0 +1,16 @@
+---
+// Link to another site: opens in a new tab. `noopener` stops the new page from controlling this
+// one; the hidden text tells screen reader users that a new tab will open.
+
+interface Props {
+	href: string;
+	class?: string;
+}
+
+const { href, class: className } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class={className}>
+	<slot />
+	<span class="sr-only"> (opens in a new tab)</span>
+</a>

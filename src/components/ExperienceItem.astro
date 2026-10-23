@@ -1,4 +1,5 @@
 ---
+import ExternalLink from "@/components/ExternalLink.astro";
 import TagList from "@/components/TagList.astro";
 import type { Experience } from "@/data/experience";
 import { formatPeriod } from "@/lib/dates";
@@ -22,9 +23,9 @@ const { job } = Astro.props;
 		<h3 class="font-display text-lg leading-snug font-semibold">
 			{job.role} at{" "}
 			{job.companyUrl ? (
-				<a href={job.companyUrl} class="hover:text-accent">
+				<ExternalLink href={job.companyUrl} class="hover:text-accent">
 					{job.company}
-				</a>
+				</ExternalLink>
 			) : (
 				job.company
 			)}

@@ -1,6 +1,7 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import { render } from "astro:content";
+import ExternalLink from "@/components/ExternalLink.astro";
 import TagList from "@/components/TagList.astro";
 import ProseLayout from "@/layouts/ProseLayout.astro";
 import { getProjects } from "@/lib/projects";
@@ -23,14 +24,14 @@ const { Content } = await render(project);
 		{(repo || demo) && (
 			<p class="flex gap-5 font-medium">
 				{repo && (
-					<a href={repo} class="text-accent underline underline-offset-4">
+					<ExternalLink href={repo} class="text-accent underline underline-offset-4">
 						View the code
-					</a>
+					</ExternalLink>
 				)}
 				{demo && (
-					<a href={demo} class="text-accent underline underline-offset-4">
+					<ExternalLink href={demo} class="text-accent underline underline-offset-4">
 						Open the live demo
-					</a>
+					</ExternalLink>
 				)}
 			</p>
 		)}
