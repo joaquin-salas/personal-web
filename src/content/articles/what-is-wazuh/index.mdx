@@ -9,6 +9,8 @@ tags: ["wazuh", "security", "siem"]
 draft: true
 ---
 
+import Callout from "@/components/Callout.astro";
+
 Wazuh is an open-source security platform that collect logs from all your machine, detects threats and checks wheter your systems follos security rules.
 
 This is known as a **SIEM**.
@@ -30,7 +32,11 @@ sudo dpkg -i wazuh-agent.deb
 
 An agent's configuration lives in `/var/ossec/etc/ossec.conf`.
 
-> **Note:** the agent and the server must run compatible versions.
+<Callout type="warning">
+
+The agent and the server must run compatible versions.
+
+</Callout>
 
 ## Further reading
 

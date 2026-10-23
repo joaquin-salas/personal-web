@@ -86,7 +86,8 @@ The visual identity comes from Granada: lime-washed walls, cypress green, Nasrid
 ochre. Keep it restrained; the oversized condensed name on the home page is the one bold element.
 
 - Palette (tokens in `global.css`): `background` lime wash, `ink` cypress, `muted` sage, `rule`
-  plaster, `accent` azulejo blue (links, focus), `mark` ochre (only the eight-point star mark).
+  plaster, `accent` azulejo blue (links, focus, note callouts), `mark` ochre (only the eight-point
+  star mark), `caution` almagra red (warning callouts).
 - Type: Bricolage Grotesque (`font-display`: name, headings, UI), Source Serif 4 (`font-serif`: body
   and article text), JetBrains Mono (`font-mono`: code only). Self-hosted via Fontsource.
 - Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
@@ -116,9 +117,9 @@ src/
 ├── layouts/                  BaseLayout   <html lang="en">, <head>, global CSS. Used by every page.
 │                             PageLayout   Single column + SiteHeader + SiteFooter (all but home).
 │                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
-├── components/               Reusable UI with typed Props: ArticleCard, ProjectCard,
-│                             ExperienceItem, Section, SectionNav, SiteHeader, SiteFooter,
-│                             SocialLinks, StarMark, TagList.
+├── components/               Reusable UI with typed Props: ArticleCard, Callout (for .mdx),
+│                             ExperienceItem, ExternalLink, ProjectCard, Section, SectionNav,
+│                             SiteHeader, SiteFooter, SocialLinks, StarMark, TagList.
 ├── assets/                   Images used by components (optimized by Astro).
 └── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
 public/                       Copied as-is to the site root (favicon.svg, cv.pdf, robots.txt).
@@ -153,12 +154,15 @@ public/                       Copied as-is to the site root (favicon.svg, cv.pdf
 | `repo`        | —        | optional | URL                                                |
 | `demo`        | —        | optional | URL                                                |
 | `featured`    | —        | optional | `true` shows the project on the home page          |
-| `cover`       | optional | optional | `{ src: ./cover.png, alt: "…" }`, used for cards   |
+| `cover`       | optional | optional | `{ src: ./cover.png, alt: "…" }`, top of the page  |
 | `draft`       | optional | optional | `true` shows it in `pnpm dev` only, never in build |
 
 - Don't repeat the title as `# Heading` in the body; the page renders it. Start sections at `##`.
 - No HTML with classes and no Tailwind in content. If a post needs a visual element (callout,
   diagram), create a component and use it from `.mdx`.
+- Available in `.mdx`: `<Callout type="note | warning">` (import it from
+  `@/components/Callout.astro`). Leave blank lines inside the tags so the content is Markdown.
+- Links to other sites in components use `ExternalLink` (opens a new tab). `mailto:` links don't.
 
 ### CV data (`src/data/`)
 

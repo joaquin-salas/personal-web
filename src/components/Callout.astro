@@ -1,0 +1,28 @@
+---
+// Highlighted box for articles (.mdx): `<Callout type="note">…</Callout>`. The content between the
+// tags can be Markdown; leave a blank line after the opening tag and before the closing one.
+
+interface Props {
+	type: "note" | "warning";
+}
+
+const { type } = Astro.props;
+
+const styles = {
+	note: { label: "Note", border: "border-accent", text: "text-accent" },
+	warning: { label: "Warning", border: "border-caution", text: "text-caution" },
+}[type];
+---
+
+<div
+	role="note"
+	class:list={[
+		"my-8 border-l-4 bg-rule/40 px-5 py-4 [&>*:last-child]:mb-0 [&>p:nth-child(2)]:mt-0",
+		styles.border,
+	]}
+>
+	<p class:list={["not-prose mb-2 font-display text-base font-semibold", styles.text]}>
+		{styles.label}
+	</p>
+	<slot />
+</div>

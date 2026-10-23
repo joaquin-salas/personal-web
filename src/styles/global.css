@@ -18,6 +18,7 @@
 	--color-rule: #dcdfd8; /* Plaster: dividers, timeline */
 	--color-accent: #2a4fa8; /* Azulejo: links, focus */
 	--color-mark: #b9832b; /* Ochre: the star mark only */
+	--color-caution: #9c3d2a; /* Almagra: warnings */
 
 	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-serif: "Source Serif 4 Variable", Georgia, serif;

@@ -68,6 +68,24 @@ featured: true # show it on the home page
 The build fails with a clear message if a required field is missing or has the wrong type. See
 [AGENTS.md](./AGENTS.md) for every field.
 
+### Using components in a post (MDX)
+
+Name the file `index.mdx` instead of `index.md`, import the component below the frontmatter and
+use it like an HTML tag:
+
+```mdx
+import Callout from "@/components/Callout.astro";
+
+<Callout type="warning">
+
+The agent and the server must run **compatible versions**.
+
+</Callout>
+```
+
+`type` is `note` (blue) or `warning` (red). Keep the blank lines around the text so it is read as
+Markdown.
+
 ## Architecture
 
 See [AGENTS.md](./AGENTS.md) for the full project structure and conventions.
