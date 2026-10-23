@@ -2,6 +2,8 @@
 import { getArticleUrl, type Article } from "@/lib/articles";
 import { formatDate } from "@/lib/dates";
 
+// Row in an article list: year in a narrow column, then title and description.
+
 interface Props {
 	article: Article;
 }
@@ -10,11 +12,21 @@ const { article } = Astro.props;
 const { title, description, pubDate, draft } = article.data;
 ---
 
-<article>
-	<h3>
-		<a href={getArticleUrl(article)}>{title}</a>
-		{draft && <span>(draft)</span>}
-	</h3>
-	<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-	<p>{description}</p>
+<article class="grid gap-1 sm:grid-cols-[4rem_1fr] sm:gap-6">
+	<time
+		datetime={pubDate.toISOString()}
+		title={formatDate(pubDate)}
+		class="font-display text-sm text-muted sm:pt-1"
+	>
+		{pubDate.getUTCFullYear()}
+	</time>
+	<div>
+		<h3 class="font-display text-lg leading-snug font-semibold">
+			<a href={getArticleUrl(article)} class="hover:text-accent hover:underline underline-offset-4">
+				{title}
+			</a>
+			{draft && <span class="ml-2 text-sm font-normal text-mark">Draft</span>}
+		</h3>
+		<p class="mt-1 text-muted">{description}</p>
+	</div>
 </article>

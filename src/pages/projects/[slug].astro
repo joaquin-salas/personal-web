@@ -18,10 +18,22 @@ const { Content } = await render(project);
 ---
 
 <ProseLayout {...project.data}>
-	<div slot="meta">
+	<div slot="meta" class="space-y-3">
 		<TagList tags={stack} label="Technologies" />
-		{repo && <a href={repo}>Code</a>}
-		{demo && <a href={demo}>Live demo</a>}
+		{(repo || demo) && (
+			<p class="flex gap-5 font-medium">
+				{repo && (
+					<a href={repo} class="text-accent underline underline-offset-4">
+						View the code
+					</a>
+				)}
+				{demo && (
+					<a href={demo} class="text-accent underline underline-offset-4">
+						Open the live demo
+					</a>
+				)}
+			</p>
+		)}
 	</div>
 	<Content />
 </ProseLayout>

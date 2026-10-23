@@ -1,0 +1,21 @@
+---
+// In-page links to the home page sections.
+
+interface Props {
+	sections: { id: string; title: string }[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav aria-label="Sections">
+	<ul class="space-y-2 font-display">
+		{sections.map(({ id, title }) => (
+			<li>
+				<a href={`#${id}`} class="text-muted hover:text-ink">
+					{title}
+				</a>
+			</li>
+		))}
+	</ul>
+</nav>

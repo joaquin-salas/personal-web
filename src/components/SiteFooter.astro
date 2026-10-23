@@ -1,0 +1,19 @@
+---
+import { buildCommit, buildDate } from "@/lib/build";
+import { formatDate } from "@/lib/dates";
+
+interface Props {}
+---
+
+<footer class="space-y-1 border-t border-rule py-8 font-display text-sm text-muted">
+	<p>Self-hosted on Oracle Cloud.</p>
+	<p>
+		Built on <time datetime={buildDate.toISOString()}>{formatDate(buildDate)}</time>
+		{buildCommit && (
+			<span>
+				{" "}
+				from commit <code class="font-mono">{buildCommit}</code>
+			</span>
+		)}
+	</p>
+</footer>

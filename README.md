@@ -22,6 +22,7 @@ Before committing: `pnpm check` (types + formatting). `pnpm format` fixes format
 | Add or edit a job                | `src/data/experience.ts`                     |
 | Add or edit a degree             | `src/data/education.ts`                      |
 | Add a file with a fixed URL (CV) | `public/` (e.g. `public/cv.pdf` → `/cv.pdf`) |
+| Change colors or fonts           | `src/styles/global.css` (the `@theme` block) |
 
 ### Writing an article
 

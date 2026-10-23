@@ -1,4 +1,5 @@
 // All dates on the site are formatted here so they look the same everywhere.
+// Content dates are parsed as UTC midnight, so format in UTC to avoid showing the previous day.
 
 /** e.g. "1 July 2022". */
 export function formatDate(date: Date): string {
@@ -6,12 +7,13 @@ export function formatDate(date: Date): string {
 		day: "numeric",
 		month: "long",
 		year: "numeric",
+		timeZone: "UTC",
 	}).format(date);
 }
 
-/** e.g. `formatPeriod("2025-09", "present")` → "Sept 2025 — Present". */
+/** e.g. `formatPeriod("2025-09", "present")` → "Sept 2025 – Present". */
 export function formatPeriod(start: string, end: string): string {
-	return `${formatYearMonth(start)} — ${end === "present" ? "Present" : formatYearMonth(end)}`;
+	return `${formatYearMonth(start)} – ${end === "present" ? "Present" : formatYearMonth(end)}`;
 }
 
 /** Formats `"2026-01"` as "Jan 2026". Other values (e.g. `"2022"`) are returned as-is. */

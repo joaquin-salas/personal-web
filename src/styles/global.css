@@ -1,0 +1,57 @@
+/* Self-hosted variable fonts. "standard" includes Bricolage's width axis (condensed name). */
+@import "@fontsource-variable/bricolage-grotesque/standard.css";
+@import "@fontsource-variable/source-serif-4/opsz.css";
+@import "@fontsource-variable/source-serif-4/opsz-italic.css";
+@import "@fontsource-variable/jetbrains-mono";
+
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Design tokens: the only place colors and fonts are defined. Change a value here and the whole
+ * site follows. Palette inspired by Granada's Albaicín: lime-washed walls, cypress, Nasrid tiles.
+ */
+@theme {
+	--color-background: #f3f3ef; /* Lime wash */
+	--color-ink: #17261f; /* Cypress: main text */
+	--color-muted: #5d6b63; /* Sage: dates, descriptions */
+	--color-rule: #dcdfd8; /* Plaster: dividers, timeline */
+	--color-accent: #2a4fa8; /* Azulejo: links, focus */
+	--color-mark: #b9832b; /* Ochre: the star mark only */
+
+	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-serif: "Source Serif 4 Variable", Georgia, serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+@layer base {
+	html {
+		@apply bg-background font-serif text-ink antialiased;
+	}
+
+	::selection {
+		@apply bg-accent text-background;
+	}
+
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-accent;
+	}
+}
+
+/* Colors for Markdown bodies (`prose prose-albaicin`), mapped to the tokens above. */
+@utility prose-albaicin {
+	--tw-prose-body: var(--color-ink);
+	--tw-prose-headings: var(--color-ink);
+	--tw-prose-lead: var(--color-muted);
+	--tw-prose-links: var(--color-accent);
+	--tw-prose-bold: var(--color-ink);
+	--tw-prose-counters: var(--color-muted);
+	--tw-prose-bullets: var(--color-muted);
+	--tw-prose-hr: var(--color-rule);
+	--tw-prose-quotes: var(--color-ink);
+	--tw-prose-quote-borders: var(--color-mark);
+	--tw-prose-captions: var(--color-muted);
+	--tw-prose-code: var(--color-ink);
+	--tw-prose-th-borders: var(--color-rule);
+	--tw-prose-td-borders: var(--color-rule);
+}

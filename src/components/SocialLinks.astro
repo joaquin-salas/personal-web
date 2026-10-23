@@ -1,0 +1,22 @@
+---
+import type { Link } from "@/data/profile";
+
+interface Props {
+	links: Link[];
+}
+
+const { links } = Astro.props;
+---
+
+<ul aria-label="Links" class="flex flex-wrap gap-x-5 gap-y-2 font-display text-sm">
+	{links.map((link) => (
+		<li>
+			<a
+				href={link.href}
+				class="underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-accent"
+			>
+				{link.label}
+			</a>
+		</li>
+	))}
+</ul>

@@ -1,0 +1,42 @@
+---
+import TagList from "@/components/TagList.astro";
+import type { Experience } from "@/data/experience";
+import { formatPeriod } from "@/lib/dates";
+
+// One entry of the experience timeline. Must be rendered inside an <ol>.
+
+interface Props {
+	job: Experience;
+}
+
+const { job } = Astro.props;
+---
+
+<li class="grid gap-2 sm:grid-cols-[9rem_1fr] sm:gap-8">
+	<p class="font-display text-sm text-muted sm:pt-1">{formatPeriod(job.start, job.end)}</p>
+	<div class="relative border-l border-rule pb-12 pl-6">
+		<span
+			class="absolute top-2 -left-[5px] size-[9px] rounded-full border-2 border-muted bg-background"
+			aria-hidden="true"
+		></span>
+		<h3 class="font-display text-lg leading-snug font-semibold">
+			{job.role} at{" "}
+			{job.companyUrl ? (
+				<a href={job.companyUrl} class="hover:text-accent">
+					{job.company}
+				</a>
+			) : (
+				job.company
+			)}
+		</h3>
+		<p class="mt-2">{job.summary}</p>
+		<ul class="mt-3 list-disc space-y-1 pl-5 marker:text-muted">
+			{job.highlights.map((highlight) => (
+				<li>{highlight}</li>
+			))}
+		</ul>
+		<div class="mt-4">
+			<TagList tags={job.stack} label="Technologies" />
+		</div>
+	</div>
+</li>

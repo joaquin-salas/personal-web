@@ -1,5 +1,7 @@
 ---
-import Navigation from "@/components/Navigation.astro";
+import "@/styles/global.css";
+
+// HTML shell only. Pages and layouts decide their own <header>, <main> and <footer>.
 
 interface Props {
 	title: string;
@@ -9,23 +11,18 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" class="motion-safe:scroll-smooth">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#f3f3ef" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
 		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 		<title>{title}</title>
 	</head>
 	<body>
-		<header>
-			<Navigation />
-		</header>
-		<main>
-			<slot />
-		</main>
+		<slot />
 	</body>
 </html>

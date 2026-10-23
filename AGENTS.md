@@ -5,14 +5,6 @@ e.g. Kubernetes, Kafka, Wazuh) and write-ups of projects I've built. Static Astr
 written in TypeScript and styled with Tailwind CSS. Self-hosted on an Oracle Cloud instance behind a
 reverse proxy. There is no backend and no database: everything is built to static HTML in `dist/`.
 
-> **Migration in progress.** This file describes the _target_ architecture. Styling and the final
-> home page layout are not built yet. Follow this document, not the current code:
->
-> 1. ~~Rewrite this file~~
-> 2. ~~Remove i18n and restructure folders~~
-> 3. ~~`articles` and `projects` collections + their pages~~
-> 4. Tailwind, base layout and home page
-
 ## Principles
 
 - **Keep it simple.** Build only what is needed now. Don't add features, abstractions or
@@ -75,17 +67,34 @@ A two-column layout on desktop: the left column is sticky, the right one scrolls
 collapses to a single column. The structure is inspired by brittanychiang.com, but the visual design
 (colors, typography, details) must be our own.
 
-| Section               | Shows                                                                 | Data source                       |
-| --------------------- | --------------------------------------------------------------------- | --------------------------------- |
-| Header (left, sticky) | Name, role, tagline, in-page nav (About, Experience, …), social links | `src/data/profile.ts`             |
-| About                 | A few paragraphs                                                      | `src/data/profile.ts`             |
-| Experience            | Dates, role · company, description, tech tags + "View full CV" link   | `src/data/experience.ts`          |
-| Education             | Degree, school, dates                                                 | `src/data/education.ts`           |
-| Projects              | Featured projects (cover, title, description, stack) + "All projects" | `projects` collection, `featured` |
-| Articles              | Latest 3–4 articles (year, title, cover) + "All articles"             | `articles` collection             |
-| Footer                | Short credits                                                         | —                                 |
+| Section               | Shows                                                                | Data source                       |
+| --------------------- | -------------------------------------------------------------------- | --------------------------------- |
+| Header (left, sticky) | Name, role, tagline, in-page nav, links (GitHub, LinkedIn, Email)    | `src/data/profile.ts`             |
+| About                 | A few paragraphs                                                     | `src/data/profile.ts`             |
+| Experience            | Timeline: dates, role at company, summary, highlights, stack         | `src/data/experience.ts`          |
+| Education             | Dates, degree, school                                                | `src/data/education.ts`           |
+| Projects              | Featured projects (title, description, stack) + link to `/projects/` | `projects` collection, `featured` |
+| Articles              | Latest 4 articles (year, title, description) + link to `/articles/`  | `articles` collection             |
+| Footer                | Build stamp: build date and commit, "Self-hosted on Oracle Cloud"    | `src/lib/build.ts`                |
 
-Article and project pages use a single-column reading layout with a link back to the home page.
+Every other page uses `PageLayout`: a single column with `SiteHeader` (star mark + name linking
+home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top.
+
+### Design direction ("Albaicín")
+
+The visual identity comes from Granada: lime-washed walls, cypress green, Nasrid tile cobalt and
+ochre. Keep it restrained; the oversized condensed name on the home page is the one bold element.
+
+- Palette (tokens in `global.css`): `background` lime wash, `ink` cypress, `muted` sage, `rule`
+  plaster, `accent` azulejo blue (links, focus), `mark` ochre (only the eight-point star mark).
+- Type: Bricolage Grotesque (`font-display`: name, headings, UI), Source Serif 4 (`font-serif`: body
+  and article text), JetBrains Mono (`font-mono`: code only). Self-hosted via Fontsource.
+- Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
+  stacks and tags are plain comma-separated text, not chips.
+- Structure carries meaning: the timeline line is only on experience because it is chronological.
+- No decorative motion (no fade-ins, no hover-lift). Feedback is color/underline on links and a
+  visible focus ring.
+- Copy says what a link does ("See all projects"), no `→` suffixes, no `A · B · C` meta strings.
 
 ## Project structure
 
@@ -96,20 +105,23 @@ src/
 │   └── projects/<slug>/index.md   One folder per project; its images live next to it.
 ├── content.config.ts         Collection schemas (frontmatter is validated at build time).
 ├── data/                     CV data as typed TS: profile.ts, experience.ts, education.ts.
-├── lib/                      Logic with no markup: articles.ts, projects.ts (queries, sorting, URLs).
+├── lib/                      Logic with no markup: articles.ts, projects.ts (queries, sorting,
+│                             URLs), dates.ts (date formatting), build.ts (build date and commit).
 ├── pages/                    One file per URL. Fetch data from src/lib/ and compose components.
 │   ├── index.astro               → /
 │   ├── articles/index.astro      → /articles/
 │   ├── articles/[slug].astro     → /articles/<slug>/
 │   ├── projects/index.astro      → /projects/
 │   └── projects/[slug].astro     → /projects/<slug>/
-├── layouts/                  BaseLayout (<html lang="en">, <head>, SEO, global CSS) and
-│                             ProseLayout (single-column reading page for articles/projects).
+├── layouts/                  BaseLayout   <html lang="en">, <head>, global CSS. Used by every page.
+│                             PageLayout   Single column + SiteHeader + SiteFooter (all but home).
+│                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
 ├── components/               Reusable UI with typed Props: ArticleCard, ProjectCard,
-│                             ExperienceItem, SocialLinks, SectionNav, TagList, …
+│                             ExperienceItem, Section, SectionNav, SiteHeader, SiteFooter,
+│                             SocialLinks, StarMark, TagList.
 ├── assets/                   Images used by components (optimized by Astro).
-└── styles/global.css         Tailwind import + design tokens (`@theme`): colors, fonts, spacing.
-public/                       Copied as-is to the site root (favicon, cv.pdf, robots.txt).
+└── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
+public/                       Copied as-is to the site root (favicon.svg, cv.pdf, robots.txt).
 ```
 
 ### Where does new code go?
@@ -169,7 +181,9 @@ public/                       Copied as-is to the site root (favicon, cv.pdf, ro
   token-based classes (`bg-background`, `text-accent`), not raw values (`bg-[#0a192f]`).
 - Tailwind classes live only in components, layouts and pages, never in `src/content/` or
   `src/data/`.
-- Markdown bodies are styled in one place: the `prose` wrapper in `ProseLayout`.
+- Markdown bodies are styled in one place: the `prose prose-albaicin` wrapper in `ProseLayout`
+  (colors mapped to tokens by the `prose-albaicin` utility in `global.css`).
+- Code blocks use Shiki's `github-light` theme (`astro.config.ts`).
 - No custom CSS files besides `global.css` unless Tailwind truly can't express something.
 
 ### Markup and accessibility

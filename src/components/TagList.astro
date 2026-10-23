@@ -1,4 +1,6 @@
 ---
+// Renders as plain comma-separated text ("React, Node.js, Koa") rather than chips.
+
 interface Props {
 	tags: string[];
 	label: string;
@@ -8,9 +10,9 @@ const { tags, label } = Astro.props;
 ---
 
 {tags.length > 0 && (
-	<ul aria-label={label}>
+	<ul aria-label={label} class="flex flex-wrap font-display text-sm text-muted">
 		{tags.map((tag) => (
-			<li>{tag}</li>
+			<li class="after:mr-1.5 after:content-[','] last:after:content-none">{tag}</li>
 		))}
 	</ul>
 )}

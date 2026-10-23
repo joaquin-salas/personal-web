@@ -1,0 +1,16 @@
+---
+// Eight-point star from Nasrid tilework: two overlapping squares. Decorative, so hidden from
+// screen readers; the link text next to it carries the meaning.
+
+interface Props {
+	/** Size utilities, e.g. `size-5`. */
+	class: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg class:list={["fill-mark", className]} viewBox="0 0 24 24" aria-hidden="true">
+	<rect x="5" y="5" width="14" height="14"></rect>
+	<rect x="5" y="5" width="14" height="14" transform="rotate(45 12 12)"></rect>
+</svg>

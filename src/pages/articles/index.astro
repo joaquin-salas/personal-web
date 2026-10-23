@@ -1,18 +1,26 @@
 ---
 import ArticleCard from "@/components/ArticleCard.astro";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageLayout from "@/layouts/PageLayout.astro";
 import { getArticles } from "@/lib/articles";
 
 const articles = await getArticles();
 ---
 
-<BaseLayout title="Articles — Joaquín Salas" description="Articles and notes by Joaquín Salas">
-	<h1>Articles</h1>
+<PageLayout
+	title="Articles | Joaquín Salas"
+	description="Notes on the technologies Joaquín Salas is learning and using."
+>
+	<h1 class="font-display text-4xl font-bold tracking-tight font-stretch-semi-condensed sm:text-5xl">
+		Articles
+	</h1>
+	<p class="mt-4 max-w-prose text-lg text-muted">
+		Notes on the technologies I'm learning and using, written as I go.
+	</p>
 
 	{articles.length === 0 ? (
-		<p>No articles yet.</p>
+		<p class="mt-12">No articles published yet.</p>
 	) : (
-		<ul>
+		<ul class="mt-14 space-y-10">
 			{articles.map((article) => (
 				<li>
 					<ArticleCard article={article} />
@@ -20,4 +28,4 @@ const articles = await getArticles();
 			))}
 		</ul>
 	)}
-</BaseLayout>
+</PageLayout>
