@@ -51,3 +51,4 @@ TODO
 
 - [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf), the Raft paper
 - [The Raft website](https://raft.github.io/), with a visualization of the algorithm
+- [Raft algorithm animation](https://thesecretlivesofdata.com/raft/), an animated explanation of Raft
