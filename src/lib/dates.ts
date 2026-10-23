@@ -16,14 +16,18 @@ export function formatPeriod(start: string, end: string): string {
 	return `${formatYearMonth(start)} – ${end === "present" ? "Present" : formatYearMonth(end)}`;
 }
 
-/** Formats `"2026-01"` as "Jan 2026". Other values (e.g. `"2022"`) are returned as-is. */
-export function formatYearMonth(value: string): string {
-	const match = /^(\d{4})-(\d{2})$/.exec(value);
-	if (!match) return value;
-	const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1));
+/** e.g. "Oct 2026". */
+export function formatMonthYear(date: Date): string {
 	return new Intl.DateTimeFormat("en-GB", {
 		month: "short",
 		year: "numeric",
 		timeZone: "UTC",
 	}).format(date);
+}
+
+/** Formats `"2026-01"` as "Jan 2026". Other values (e.g. `"2022"`) are returned as-is. */
+export function formatYearMonth(value: string): string {
+	const match = /^(\d{4})-(\d{2})$/.exec(value);
+	if (!match) return value;
+	return formatMonthYear(new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1)));
 }
