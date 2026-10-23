@@ -1,5 +1,7 @@
 {
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
-	"[astro]": { "editor.defaultFormatter": "astro-build.astro-vscode" }
+	// Same formatter as `pnpm format` for every file type, including .astro.
+	"[astro]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+	"prettier.requireConfig": true
 }
