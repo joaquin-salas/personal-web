@@ -28,10 +28,10 @@ export const profile: Profile = {
 		"During a six-month internship at Naranjo I worked across the frontend and backend of AITANNA.AI, inside a monorepo with Docker, branch-based Git workflows and conventional commits.",
 		"I'm currently looking for my first full-time role as a software engineer.",
 	],
-	email: "TODO@example.com", // TODO
+	email: "joaquin.salas.dev@gmail.com",
 	links: [
-		{ label: "GitHub", href: "https://github.com/TODO" }, // TODO
-		{ label: "LinkedIn", href: "https://www.linkedin.com/in/TODO" }, // TODO
+		{ label: "GitHub", href: "https://github.com/JoaquinSalasCastillo" },
+		{ label: "LinkedIn", href: "https://www.linkedin.com/in/joaquin-salas-castillo" },
 		// { label: "CV", href: "/cv.pdf" }, // put the PDF in public/cv.pdf
 	],
 };

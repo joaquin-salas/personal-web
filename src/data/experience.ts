@@ -5,9 +5,7 @@ export interface Experience {
 	company: string;
 	companyUrl?: string;
 	role: string;
-	/** `"YYYY-MM"`. */
 	start: string;
-	/** `"YYYY-MM"`, or `"present"`. */
 	end: string;
 	summary: string;
 	highlights: string[];
@@ -16,10 +14,10 @@ export interface Experience {
 
 export const experience: Experience[] = [
 	{
-		company: "Naranjo",
+		company: "Naranjo Intelligent Solutions",
 		role: "Full-Stack Developer (Intern)",
-		start: "TODO", // e.g. "2026-01"
-		end: "TODO",
+		start: "2026-02", // e.g. "2026-01"
+		end: "2026-08",
 		summary: "Worked on AITANNA.AI across the frontend and backend.",
 		highlights: [
 			"Built features for the React frontend and the Node.js/Koa API backed by MongoDB.",
