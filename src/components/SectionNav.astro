@@ -9,7 +9,7 @@ const { sections } = Astro.props;
 ---
 
 <nav aria-label="Sections">
-	<ul class="space-y-2 font-display">
+	<ul class="space-y-1 font-display">
 		{sections.map(({ id, title }) => (
 			<li>
 				<a href={`#${id}`} class="text-muted hover:text-ink">

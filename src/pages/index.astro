@@ -33,32 +33,32 @@ const links = [...profile.links, { label: "Email", href: `mailto:${profile.email
 ---
 
 <BaseLayout title={`${profile.name}, ${profile.role}`} description={profile.tagline}>
-	<div class="mx-auto max-w-7xl px-6 sm:px-10 lg:flex lg:gap-20 lg:px-16">
+	<div class="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16 desktop:flex desktop:gap-20">
 		<!-- On desktop the header is pinned, so its spacing and name shrink with the viewport height
 		(short windows, zoom, OS scaling) to keep it all on screen. -->
-		<header class="pt-16 pb-20 lg:w-5/12 lg:py-[clamp(1.5rem,7vh,5rem)] tall:sticky tall:top-0 tall:flex tall:h-screen tall:flex-col tall:justify-between tall:gap-6">
+		<header class="pt-16 pb-20 desktop:sticky desktop:top-0 desktop:flex desktop:h-screen desktop:w-5/12 desktop:flex-col desktop:justify-between desktop:gap-4 desktop:py-[clamp(1rem,5vh,5rem)]">
 			<div>
-				<Monogram class="mb-8 size-12 lg:mb-[clamp(1rem,4vh,2rem)]" cut="regular" />
-				<h1 class="font-display text-[clamp(4.5rem,10vw,7.5rem)] leading-[0.82] font-extrabold tracking-tight font-stretch-condensed lg:text-[min(10vw,12vh,7.5rem)]">
+				<Monogram class="mb-8 size-12 desktop:mb-[clamp(0.75rem,3vh,2rem)]" cut="regular" />
+				<h1 class="font-display text-[clamp(4.5rem,10vw,7.5rem)] leading-[0.82] font-extrabold tracking-tight font-stretch-condensed desktop:text-[min(10vw,11vh,7.5rem)]">
 					{profile.name.split(" ").map((word) => (
 						<span class="block">{word}</span>
 					))}
 				</h1>
-				<p class="mt-8 font-display text-xl font-medium lg:mt-[clamp(1rem,4vh,2rem)]">
+				<p class="mt-8 font-display text-xl font-medium desktop:mt-[clamp(0.75rem,3vh,2rem)]">
 					{profile.role} in {profile.location}
 				</p>
 				<p class="mt-3 max-w-sm text-muted">{profile.tagline}</p>
-				<div class="mt-14 hidden lg:mt-[clamp(1.5rem,6vh,3.5rem)] lg:block">
+				<div class="mt-14 hidden desktop:mt-[clamp(1rem,5vh,3.5rem)] desktop:block">
 					<SectionNav sections={sections} />
 				</div>
 			</div>
-			<div class="mt-10 flex items-center gap-5 tall:mt-0">
+			<div class="mt-10 flex items-center gap-5 desktop:mt-0">
 				<SocialLinks links={links} />
 				<ThemeToggle />
 			</div>
 		</header>
 
-		<main class="lg:w-7/12 lg:pt-20">
+		<main class="desktop:w-7/12 desktop:pt-20">
 			<Section id="about" title="About">
 				<div class="max-w-prose space-y-4 text-lg leading-[1.7]">
 					{profile.about.map((paragraph) => (
