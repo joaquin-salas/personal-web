@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand options</title>
+<!-- Preview only: fonts from Google Fonts. The site self-hosts the chosen ones via Fontsource. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400&family=Archivo:wdth,wght@62..125,400..900&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Palettes. Contrast vs background (WCAG): ink / muted / accent. */
+[data-palette="current"] { --bg:#f3f3ef; --ink:#17261f; --muted:#5d6b63; --rule:#dcdfd8; --accent:#2a4fa8; --code:#eaeae4; }
+[data-palette="azulejo"] { --bg:#f6f4ee; --ink:#1b211e; --muted:#5c635f; --rule:#e4e1d8; --accent:#2a4b9b; --code:#edeae2; }
+[data-palette="almagra"] { --bg:#f7f4ee; --ink:#1d1b18; --muted:#655f57; --rule:#e7e1d6; --accent:#9e3b26; --code:#eee9df; }
+[data-palette="cypress"] { --bg:#f4f4ef; --ink:#161b18; --muted:#5d6560; --rule:#e1e3dc; --accent:#2c6248; --code:#e9eae3; }
+
+/* Type pairings: sans (name, headings, UI) + serif (reading). Mono is JetBrains Mono for code only. */
+[data-type="bricolage"] { --sans:"Bricolage Grotesque",system-ui,sans-serif; --serif:"Source Serif 4",Georgia,serif; --name-wdth:75; --name-wght:800; --name-track:-0.02em; }
+[data-type="instrument"] { --sans:"Instrument Sans",system-ui,sans-serif; --serif:"Newsreader",Georgia,serif; --name-wdth:75; --name-wght:700; --name-track:-0.03em; }
+[data-type="archivo"] { --sans:"Archivo",system-ui,sans-serif; --serif:"Literata",Georgia,serif; --name-wdth:62; --name-wght:800; --name-track:-0.01em; }
+[data-type="mixed"] { --sans:"Bricolage Grotesque",system-ui,sans-serif; --serif:"Literata",Georgia,serif; --name-wdth:75; --name-wght:800; --name-track:-0.02em; }
+
+* { box-sizing:border-box; }
+html, body { margin:0; }
+body { font:15px/1.5 system-ui,sans-serif; background:#e6e6e3; color:#222; }
+
+.controls { position:sticky; top:0; z-index:1; display:flex; flex-wrap:wrap; gap:12px 32px; align-items:flex-start; padding:14px 24px; background:#fff; border-bottom:1px solid #ccc; }
+.controls fieldset { border:0; margin:0; padding:0; }
+.controls legend { font-weight:600; margin-bottom:6px; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:#555; }
+.controls label { display:inline-flex; align-items:center; gap:6px; margin-right:14px; cursor:pointer; }
+.swatches { display:inline-flex; gap:2px; }
+.swatches i { width:12px; height:12px; border-radius:2px; border:1px solid rgba(0,0,0,.15); }
+.note { font-size:13px; color:#555; max-width:60ch; margin:0; }
+
+.stage { padding:24px; display:grid; gap:24px; }
+.frame { background:var(--bg); color:var(--ink); border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.12); overflow:hidden; }
+.frame-label { font:600 12px/1 system-ui; text-transform:uppercase; letter-spacing:.06em; color:#666; margin:0 0 8px; }
+
+/* Home */
+.home { display:grid; grid-template-columns:5fr 7fr; gap:72px; padding:64px 56px; }
+.sans { font-family:var(--sans); }
+.serif { font-family:var(--serif); }
+.mark { width:44px; height:44px; color:var(--ink); }
+.name { font-family:var(--sans); font-size:108px; line-height:.84; margin:28px 0 0; font-weight:var(--name-wght); font-variation-settings:"wdth" var(--name-wdth); font-stretch:calc(var(--name-wdth) * 1%); letter-spacing:var(--name-track); }
+.role { font-family:var(--sans); font-size:20px; font-weight:500; margin:28px 0 0; }
+.tagline { font-family:var(--serif); color:var(--muted); margin:10px 0 0; max-width:24rem; font-size:16px; line-height:1.55; }
+.nav { list-style:none; padding:0; margin:40px 0 0; font-family:var(--sans); }
+.nav li { margin:6px 0; color:var(--muted); }
+.nav li.on { color:var(--ink); }
+.social { font-family:var(--sans); font-size:14px; margin-top:36px; display:flex; gap:20px; }
+.social a { color:var(--ink); text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:4px; }
+h2.sec { font-family:var(--sans); font-size:22px; font-weight:600; margin:0 0 20px; }
+.about p { font-family:var(--serif); font-size:18px; line-height:1.65; margin:0 0 14px; max-width:62ch; }
+.job { display:grid; grid-template-columns:9rem 1fr; gap:32px; margin-top:44px; }
+.job .when { font-family:var(--sans); font-size:13.5px; color:var(--muted); padding-top:3px; }
+.job h3 { font-family:var(--sans); font-size:17.5px; font-weight:600; margin:0; line-height:1.35; }
+.job p { font-family:var(--serif); margin:8px 0 0; font-size:16px; line-height:1.6; }
+.job .stack { font-family:var(--sans); font-size:13.5px; color:var(--muted); margin-top:10px; }
+.row { margin-top:44px; }
+.row h3 { font-family:var(--sans); font-size:17.5px; font-weight:600; margin:0; }
+.row h3 a { color:var(--ink); text-decoration:none; }
+.row .draft { font-family:var(--sans); font-weight:400; font-size:13px; color:var(--muted); font-style:italic; margin-left:8px; }
+.row p { font-family:var(--serif); margin:6px 0 0; font-size:16px; line-height:1.6; }
+a.link { color:var(--accent); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px; }
+
+/* Article */
+.article-wrap { padding:40px 56px 64px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; font-family:var(--sans); max-width:var(--col, 36rem); margin:0 auto; }
+.topbar .brand { display:flex; align-items:center; gap:8px; font-weight:600; }
+.topbar .brand svg { width:24px; height:24px; }
+.topbar nav { display:flex; gap:20px; font-size:14px; color:var(--muted); }
+article { max-width:var(--col, 36rem); margin:56px auto 0; }
+article h1 { font-family:var(--sans); font-size:44px; line-height:1.08; font-weight:700; letter-spacing:-0.02em; margin:0; }
+article .meta { font-family:var(--sans); color:var(--muted); font-size:14px; margin-top:14px; }
+.prose { font-family:var(--serif); font-size:var(--body, 18px); line-height:var(--leading, 1.7); margin-top:36px; }
+.prose p, .prose pre, .prose blockquote { margin:0 0 1.1em; max-width:none; }
+.prose h2 { font-family:var(--sans); font-size:26px; font-weight:650; letter-spacing:-0.01em; margin:1.8em 0 .6em; line-height:1.2; }
+.prose code { font-family:"JetBrains Mono",monospace; font-size:.82em; background:var(--code); padding:.12em .35em; border-radius:3px; }
+.prose pre { font-family:"JetBrains Mono",monospace; font-size:14.5px; line-height:1.6; background:var(--code); padding:18px 20px; border-radius:4px; overflow:auto; margin:0 0 1.3em; }
+.prose blockquote { margin:0 0 1.1em; padding-left:20px; border-left:2px solid var(--rule); color:var(--muted); font-style:italic; }
+.prose a { color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px; }
+
+/* Code styles. Token classes: k keyword, f function, s string, c comment, n number, t type. */
+[data-code="github"] { --cb-bg:#ffffff; --cb-fg:#1f2328; --cb-border:1px solid var(--rule); --k:#cf222e; --f:#8250df; --s:#0a3069; --c:#6e7781; --n:#0550ae; --t:#953800; --ic-bg:var(--rule); --k-w:400; --c-style:normal; }
+[data-code="warm"] { --cb-bg:#efe9df; --cb-fg:#1d1b18; --cb-border:0; --k:#9e3b26; --f:#1d1b18; --s:#5f5a1f; --c:#6e665c; --n:#9e3b26; --t:#3d5566; --ic-bg:#efe9df; --k-w:400; --c-style:italic; }
+[data-code="mono"] { --cb-bg:#efe9df; --cb-fg:#1d1b18; --cb-border:0; --k:#1d1b18; --f:#1d1b18; --s:#1d1b18; --c:#6e665c; --n:#1d1b18; --t:#1d1b18; --ic-bg:#efe9df; --k-w:700; --c-style:italic; }
+[data-code="rosepine"] { --cb-bg:#faf4ed; --cb-fg:#575279; --cb-border:1px solid #f2e9e1; --k:#286983; --f:#d7827e; --s:#ea9d34; --c:#9893a5; --n:#d7827e; --t:#56949f; --ic-bg:#f2e9e1; --k-w:400; --c-style:italic; }
+.prose pre { background:var(--cb-bg) !important; color:var(--cb-fg); border:var(--cb-border); tab-size:4; }
+.prose pre code { background:none !important; padding:0; font-size:inherit; }
+.prose :not(pre) > code { background:var(--ic-bg) !important; }
+.prose pre .k { color:var(--k); font-weight:var(--k-w); } .prose pre .f { color:var(--f); } .prose pre .s { color:var(--s); }
+.prose pre .c { color:var(--c); font-style:var(--c-style); } .prose pre .n { color:var(--n); } .prose pre .t { color:var(--t); }
+</style>
+</head>
+<body>
+
+<form class="controls" id="controls">
+	<fieldset>
+		<legend>Palette</legend>
+		<label><input type="radio" name="palette" value="current"> Current <span class="swatches"><i style="background:#f3f3ef"></i><i style="background:#17261f"></i><i style="background:#2a4fa8"></i><i style="background:#b9832b"></i></span></label>
+		<label><input type="radio" name="palette" value="azulejo" checked> A · Azulejo ink <span class="swatches"><i style="background:#f6f4ee"></i><i style="background:#1b211e"></i><i style="background:#2a4b9b"></i></span></label>
+		<label><input type="radio" name="palette" value="almagra"> B · Almagra <span class="swatches"><i style="background:#f7f4ee"></i><i style="background:#1d1b18"></i><i style="background:#9e3b26"></i></span></label>
+		<label><input type="radio" name="palette" value="cypress"> C · Cypress <span class="swatches"><i style="background:#f4f4ef"></i><i style="background:#161b18"></i><i style="background:#2c6248"></i></span></label>
+	</fieldset>
+	<fieldset>
+		<legend>Type</legend>
+		<label><input type="radio" name="type" value="bricolage" checked> 1 · Bricolage + Source Serif (current, refined)</label>
+		<label><input type="radio" name="type" value="instrument"> 2 · Instrument Sans + Newsreader</label>
+		<label><input type="radio" name="type" value="archivo"> 3 · Archivo + Literata</label>
+		<label><input type="radio" name="type" value="mixed"> 4 · Bricolage + Literata (1 + 3)</label>
+	</fieldset>
+	<fieldset>
+		<legend>Reading</legend>
+		<label>Size <select name="body"><option>17px</option><option selected>18px</option><option>19px</option><option>20px</option></select></label>
+		<label>Line height <select name="leading"><option>1.6</option><option selected>1.7</option><option>1.75</option><option>1.8</option></select></label>
+		<label>Column <select name="col"><option value="34rem">34rem</option><option value="36rem" selected>36rem</option><option value="38rem">38rem</option><option value="40rem">40rem</option><option value="45rem">45rem (today)</option><option value="48rem">48rem</option><option value="52rem">52rem</option></select></label>
+		<output id="cpl" style="font-size:13px;color:#555"></output>
+	</fieldset>
+	<fieldset>
+		<legend>Code</legend>
+		<label><input type="radio" name="code" value="github"> Today (github-light)</label>
+		<label><input type="radio" name="code" value="warm" checked> Warm Almagra</label>
+		<label><input type="radio" name="code" value="mono"> Monochrome</label>
+		<label><input type="radio" name="code" value="rosepine"> Rosé Pine Dawn</label>
+	</fieldset>
+	<p class="note" id="note"></p>
+</form>
+
+<div class="stage" id="stage" data-palette="azulejo" data-type="bricolage">
+	<div>
+		<p class="frame-label">Home page</p>
+		<section class="frame home">
+			<div>
+				<svg class="mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#js-mark"/></svg>
+				<h1 class="name">Joaquín<br>Salas</h1>
+				<p class="role">Software Engineer in Granada, Spain</p>
+				<p class="tagline">Computer Engineering graduate from the University of Granada. I build full-stack web applications with React, Node.js and TypeScript.</p>
+				<ul class="nav"><li class="on">About</li><li>Experience</li><li>Education</li><li>Projects</li><li>Articles</li></ul>
+				<div class="social"><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Email</a></div>
+			</div>
+			<div>
+				<h2 class="sec">About</h2>
+				<div class="about">
+					<p>I recently graduated in Computer Engineering (Ingeniería Informática) from the University of Granada.</p>
+					<p>During a six-month internship at Naranjo I worked across the frontend and backend of <a class="link" href="#">AITANNA.AI</a>, inside a monorepo with Docker, branch-based Git workflows and conventional commits.</p>
+				</div>
+				<div class="job">
+					<div class="when">Feb 2026 – Aug 2026</div>
+					<div>
+						<h3>Full-Stack Developer (Intern) at Naranjo Intelligent Solutions</h3>
+						<p>Worked on AITANNA.AI across the frontend and backend.</p>
+						<div class="stack">React, Node.js, Koa, MongoDB, Docker</div>
+					</div>
+				</div>
+				<div class="row">
+					<h3><a href="#">A fault-tolerant key-value store built on Raft in Go</a><span class="draft">Draft</span></h3>
+					<p>A replicated key-value store built on my own implementation of the Raft consensus algorithm in Go.</p>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<div>
+		<p class="frame-label">Article page</p>
+		<section class="frame article-wrap">
+			<div class="topbar">
+				<span class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#js-mark-small"/></svg>Joaquín Salas</span>
+				<nav><span>Projects</span><span>Articles</span></nav>
+			</div>
+			<article>
+				<h1>How Raft keeps a cluster in agreement</h1>
+				<p class="meta">March 2026</p>
+				<div class="prose">
+					<p>Raft splits consensus into three smaller problems: electing a leader, replicating the log, and keeping everything safe when machines crash. I wanted to understand each one well enough to build it, so this is what I learned along the way.</p>
+					<h2>Leader election</h2>
+					<p>Every node starts as a follower. If it hears nothing from a leader before its <code>electionTimeout</code> fires, it becomes a candidate and asks the others for votes. The <a href="#">original paper</a> randomises that timeout so two nodes rarely run at once.</p>
+					<pre><code><span class="c">// startElection turns a follower into a candidate and asks for votes.</span>
+<span class="k">func</span> (n *<span class="t">Node</span>) <span class="f">startElection</span>() {
+	n.term++
+	n.state = <span class="t">Candidate</span>
+	n.votedFor = n.id
+	votes := <span class="n">1</span>
+
+	<span class="k">for</span> _, peer := <span class="k">range</span> n.peers {
+		<span class="k">go</span> n.<span class="f">requestVote</span>(peer, n.term)
+	}
+	log.<span class="f">Printf</span>(<span class="s">"node %d: election for term %d"</span>, n.id, n.term)
+}</code></pre>
+					<pre><code>$ go test -race ./raft/... -run <span class="s">TestElection</span>
+<span class="c"># ok  	github.com/joaquin-salas/raft-kv/raft	1.204s</span></code></pre>
+					<blockquote>Randomised timeouts are a small trick that makes split votes rare instead of impossible.</blockquote>
+					<p>Once a candidate has votes from a majority, it becomes leader and starts sending heartbeats.</p>
+				</div>
+			</article>
+		</section>
+	</div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+	<defs>
+		<path id="jm-full" d="M42 16 L42 62 C42 78 24 82 20 70 C17 60 32 56 46 54 C58 52 70 42 74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72"/>
+		<path id="jm-loop" d="M20 70 C17 60 32 56 46 54 C58 52 70 42 74 34"/>
+		<path id="jm-s" d="M74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72"/>
+		<clipPath id="jm-c1"><circle cx="42" cy="55" r="7"/></clipPath>
+		<clipPath id="jm-c2"><circle cx="64" cy="46" r="7"/></clipPath>
+		<clipPath id="jm-g1"><circle cx="42" cy="55" r="6"/></clipPath>
+		<clipPath id="jm-g2"><circle cx="64" cy="46" r="6"/></clipPath>
+		<mask id="jm-gaps" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
+			<rect x="-10" y="-10" width="120" height="120" fill="#fff"/>
+			<g fill="none" stroke="#000" stroke-width="8" stroke-linecap="round"><use href="#jm-loop" clip-path="url(#jm-g1)"/><use href="#jm-s" clip-path="url(#jm-g2)"/></g>
+		</mask>
+		<clipPath id="js-c1"><circle cx="42" cy="55" r="9"/></clipPath>
+		<clipPath id="js-c2"><circle cx="64" cy="46" r="9"/></clipPath>
+		<clipPath id="js-g1"><circle cx="42" cy="55" r="8"/></clipPath>
+		<clipPath id="js-g2"><circle cx="64" cy="46" r="8"/></clipPath>
+		<mask id="js-gaps" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
+			<rect x="-10" y="-10" width="120" height="120" fill="#fff"/>
+			<g fill="none" stroke="#000" stroke-width="11.3" stroke-linecap="round"><use href="#jm-loop" clip-path="url(#js-g1)"/><use href="#jm-s" clip-path="url(#js-g2)"/></g>
+		</mask>
+		<g id="js-mark" transform="translate(3.5 2)" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+			<use href="#jm-full" mask="url(#jm-gaps)"/><use href="#jm-loop" clip-path="url(#jm-c1)"/><use href="#jm-s" clip-path="url(#jm-c2)"/>
+		</g>
+		<g id="js-mark-small" transform="translate(3.5 2)" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+			<use href="#jm-full" mask="url(#js-gaps)"/><use href="#jm-loop" clip-path="url(#js-c1)"/><use href="#jm-s" clip-path="url(#js-c2)"/>
+		</g>
+	</defs>
+</svg>
+
+<script>
+const notes = {
+	current: "Current Albaicín tokens, for comparison. Ochre star colour shown in the swatch; draft labels here are muted.",
+	azulejo: "A · Warm lime-wash paper, near-black ink with a hint of cypress, one azulejo blue accent. Closest to today, calmer. Contrast: ink 14.9, muted 5.6, accent 7.4.",
+	almagra: "B · Warmer paper, warm black ink, almagra (Granada clay red) accent. The most personal and editorial. Contrast: ink 15.7, muted 5.8, accent 6.2.",
+	cypress: "C · Neutral paper, green-black ink, deep cypress green accent. Quietest; links read less like 'links'. Contrast: ink 15.8, muted 5.4, accent 6.5.",
+};
+const stage = document.getElementById("stage"), form = document.getElementById("controls"), note = document.getElementById("note");
+function apply() {
+	const p = form.palette.value, t = form.type.value;
+	stage.dataset.palette = p; stage.dataset.type = t; stage.dataset.code = form.code.value; note.textContent = notes[p];
+	for (const k of ["body", "leading", "col"]) stage.style.setProperty(`--${k}`, form[k].value);
+	requestAnimationFrame(() => document.fonts.ready.then(countChars));
+	history.replaceState(null, "", `#${p}-${t}`);
+}
+const [p0, t0] = location.hash.slice(1).split("-");
+if (p0 && form.querySelector(`[value="${p0}"]`)) form.querySelector(`[value="${p0}"]`).checked = true;
+if (t0 && form.querySelector(`[value="${t0}"]`)) form.querySelector(`[value="${t0}"]`).checked = true;
+form.addEventListener("change", apply); apply();
+</script>
+</body>
+</html>
+<script>
+// Average characters per line of the first article paragraph (60–75 is the comfortable range).
+function countChars() {
+	const p = document.querySelector(".prose p"), cs = getComputedStyle(p);
+	const ctx = document.createElement("canvas").getContext("2d");
+	ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+	const avg = ctx.measureText(p.textContent).width / p.textContent.length;
+	document.getElementById("cpl").textContent = `≈ ${Math.round(p.clientWidth / avg)} characters per line`;
+}
+countChars();
+</script>
