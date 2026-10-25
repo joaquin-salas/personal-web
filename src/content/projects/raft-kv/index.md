@@ -11,7 +11,11 @@ TODO: one or two sentences on what this is and why it's interesting.
 
 ## Why I built it
 
-TODO
+Shortly: For the shake of learning how complex systems work
+
+The first question that could come to your mind is "¿why are you making this if AI could read the paper and make the system in one prompt?" That's correct but you don't get the fundamental learning of trying to understand complex systems.
+
+The times are changing and of course I'm not gonna write everything by hand but we could use AI to learn, it can teach you everything you wan't, every question that comes to your mind it could resolve it with a good answer (probably not the best but you can keep investigating).
 
 ## What it does
 
