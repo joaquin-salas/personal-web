@@ -25,6 +25,12 @@
 	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 }
 
+/*
+ * Desktop width and tall enough for the home header to fit on screen. Below this height (small
+ * screens, browser zoom, OS display scaling) the header scrolls instead of being cut off.
+ */
+@custom-variant tall (@media (min-width: 64rem) and (min-height: 37.5rem));
+
 @layer base {
 	html {
 		@apply bg-background font-serif text-ink antialiased;
