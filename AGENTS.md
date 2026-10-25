@@ -99,6 +99,11 @@ is only an undertone. The oversized condensed name on the home page is the one b
   title and body share that one column; don't narrow text inside it.
 - Code: Shiki's `css-variables` theme, colored by the `--astro-code-*` tokens in `global.css`.
   Blocks show their language as a small label; no copy button.
+- Light and dark: every color token is `light-dark(light, dark)`, so each color is defined once.
+  The site follows the OS; `ThemeToggle` (top bar, and next to the home links) overrides it and
+  stores the choice. BaseLayout's inline head script sets `data-theme` on `<html>` before first
+  paint (no flash). Use the `dark:` variant only when a token can't express it. New colors must
+  pass WCAG AA in both themes.
 - Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
   stacks and tags are plain comma-separated text, not chips.
 - Structure carries meaning: the timeline line is only on experience because it is chronological.
@@ -128,7 +133,8 @@ src/
 │                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
 ├── components/               Reusable UI with typed Props: ArticleCard, Callout (for .mdx),
 │                             ExperienceItem, ExternalLink, Monogram, ProjectCard, Section,
-│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TagList.
+│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TagList,
+│                             ThemeToggle.
 ├── assets/                   Images used by components (optimized by Astro).
 └── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
 public/                       Copied as-is to the site root (favicons, cv.pdf, robots.txt).
@@ -242,7 +248,7 @@ architecture:
 - Translations / i18n (the site is English only; visitors can use the browser's translator).
 - Article series, project dev-logs (multi-page projects), tag pages.
 - Highlighting the active section in the home nav while scrolling.
-- RSS, sitemap, search, comments, analytics, dark-mode toggle.
+- RSS, sitemap, search, comments, analytics.
 
 ## Documentation
 

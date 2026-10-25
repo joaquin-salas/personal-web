@@ -17,7 +17,21 @@ const { title, description } = Astro.props;
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#f7f4ee" />
+		<meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#171512" media="(prefers-color-scheme: dark)" />
+		<!-- Runs before first paint so a dark page never flashes light: the stored choice, else the OS. -->
+		<script is:inline>
+			{
+				let theme = null;
+				try {
+					theme = localStorage.getItem("theme");
+				} catch {}
+				if (theme !== "light" && theme !== "dark") {
+					theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+				}
+				document.documentElement.dataset.theme = theme;
+			}
+		</script>
 		<!-- Browsers cache favicons hard; bump ?v= whenever the icons change. -->
 		<link rel="icon" href="/favicon.ico?v=2" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />

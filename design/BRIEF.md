@@ -88,14 +88,17 @@ This brief explicitly says no to:
   one column so they line up. The width is one token, so it is easy to change; if long lines get
   tiring, try line height 1.75 before narrowing.
 - **Code** (chosen 2026-10-25): "Warm Almagra" syntax colours via Shiki's `css-variables` theme, so
-  they are tokens in `global.css` (and get dark values later). Blocks sit on a slightly darker
+  they are tokens in `global.css` with light and dark values. Blocks sit on a slightly darker
   paper (`#efe9df`) with no border; keywords and numbers almagra `#9e3b26`, strings olive
   `#5f5a1f`, types slate `#3d5566`, comments muted italic `#6e665c`, the rest ink (all ≥ 4.5:1 on
   the block). Inline code uses the same background, no backticks. Each block shows a small
   language label from Astro's `data-language` attribute (CSS only). No copy button (needs JS).
-- **Theme:** light only for now. Dark mode comes later as automatic (follows the OS) plus a toggle,
-  so the palette must be defined as tokens that can be swapped.
+- **Theme** (dark mode added 2026-10-25): follows the OS by default; a two-state line-icon toggle
+  (moon/sun) in the top bar and next to the home links overrides it and is remembered. Dark
+  Almagra: paper `#171512`, ink `#ebe5da`, muted `#a59d91`, rule `#2f2b26`, accent `#e0826a`,
+  caution `#d4a24c`, code `#221f1b` (strings `#c2bb7a`, types `#93abbd`, comments `#9a9286`).
+  Transparent cover images get a light backing in dark mode.
 
 ## Open questions
 
-- Dark-mode values for the Almagra palette (later).
+- None right now.

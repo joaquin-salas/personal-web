@@ -35,7 +35,10 @@ const { title, description, pubDate, updatedDate, cover } = Astro.props;
 			<div class="mt-2 text-sm text-muted">
 				<slot name="meta" />
 			</div>
-			{cover && <Image src={cover.src} alt={cover.alt} class="mt-10 w-full" />}
+			{/* In dark mode, a light backing keeps transparent covers (logos, diagrams) visible. */}
+			{cover && (
+				<Image src={cover.src} alt={cover.alt} class="mt-10 w-full dark:rounded-md dark:bg-ink" />
+			)}
 		</header>
 
 		<div class="prose max-w-none prose-almagra">

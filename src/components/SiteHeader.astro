@@ -1,5 +1,6 @@
 ---
 import Monogram from "@/components/Monogram.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 
 // Top bar for every page except the home page, which has its own sticky header.
 
@@ -17,19 +18,22 @@ const current = Astro.url.pathname;
 		<Monogram class="size-6" cut="small" />
 		Joaquín Salas
 	</a>
-	<nav aria-label="Main">
-		<ul class="flex gap-5 text-sm">
-			{pages.map(({ href, label }) => (
-				<li>
-					<a
-						href={href}
-						aria-current={current.startsWith(href) ? "page" : undefined}
-						class="text-muted hover:text-ink aria-[current]:text-ink aria-[current]:underline aria-[current]:underline-offset-4"
-					>
-						{label}
-					</a>
-				</li>
-			))}
-		</ul>
-	</nav>
+	<div class="flex items-center gap-5">
+		<nav aria-label="Main">
+			<ul class="flex gap-5 text-sm">
+				{pages.map(({ href, label }) => (
+					<li>
+						<a
+							href={href}
+							aria-current={current.startsWith(href) ? "page" : undefined}
+							class="text-muted hover:text-ink aria-[current]:text-ink aria-[current]:underline aria-[current]:underline-offset-4"
+						>
+							{label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+		<ThemeToggle />
+	</div>
 </header>

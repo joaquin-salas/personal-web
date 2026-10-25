@@ -10,17 +10,18 @@
 /*
  * Design tokens: the only place colors, fonts and the page width are defined. Change a value here
  * and the whole site follows. Palette "Almagra" (see design/BRIEF.md): warm paper, warm black ink
- * and one accent, the clay red of Granada's walls. Contrast on paper: ink 15.7, muted 5.8,
- * accent 6.2, caution 5.4.
+ * and one accent, the clay red of Granada's walls. Each color is light-dark(light, dark): the
+ * browser picks one from the active color scheme (see the theme rules in the base layer). All text
+ * colors pass WCAG AA on their background in both themes.
  */
 @theme {
-	--color-background: #f7f4ee; /* Paper */
-	--color-ink: #1d1b18; /* Warm black: main text */
-	--color-muted: #655f57; /* Dates, descriptions, draft labels */
-	--color-rule: #e7e1d6; /* Dividers, timeline */
-	--color-accent: #9e3b26; /* Almagra: links, focus, note callouts. The only accent. */
-	--color-caution: #8a5a12; /* Deep ochre: warning callouts */
-	--color-code: #efe9df; /* Code block and inline code background */
+	--color-background: light-dark(#f7f4ee, #171512); /* Paper */
+	--color-ink: light-dark(#1d1b18, #ebe5da); /* Main text */
+	--color-muted: light-dark(#655f57, #a59d91); /* Dates, descriptions, draft labels */
+	--color-rule: light-dark(#e7e1d6, #2f2b26); /* Dividers, timeline */
+	--color-accent: light-dark(#9e3b26, #e0826a); /* Almagra: links, focus, notes. The only accent. */
+	--color-caution: light-dark(#8a5a12, #d4a24c); /* Deep ochre: warning callouts */
+	--color-code: light-dark(#efe9df, #221f1b); /* Code block and inline code background */
 
 	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
 	--font-serif: "Literata Variable", Georgia, serif;
@@ -36,18 +37,35 @@
  */
 @custom-variant tall (@media (min-width: 64rem) and (min-height: 37.5rem));
 
+/* Active dark theme, chosen by BaseLayout's head script (stored choice, else the OS setting). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @layer base {
+	/*
+	 * Without JavaScript the site follows the OS setting. With it, BaseLayout sets data-theme on
+	 * <html> and that wins, so the toggle can override the OS.
+	 */
+	:root {
+		color-scheme: light dark;
+	}
+	:root[data-theme="light"] {
+		color-scheme: light;
+	}
+	:root[data-theme="dark"] {
+		color-scheme: dark;
+	}
+
 	:root {
 		/* Syntax colors for Shiki's `css-variables` theme (astro.config.ts). ≥ 4.5:1 on --color-code. */
 		--astro-code-foreground: var(--color-ink);
 		--astro-code-background: var(--color-code);
 		--astro-code-token-keyword: var(--color-accent);
 		--astro-code-token-constant: var(--color-accent);
-		--astro-code-token-string: #5f5a1f; /* Olive */
-		--astro-code-token-string-expression: #5f5a1f;
-		--astro-code-token-comment: #6e665c;
+		--astro-code-token-string: light-dark(#5f5a1f, #c2bb7a); /* Olive */
+		--astro-code-token-string-expression: light-dark(#5f5a1f, #c2bb7a);
+		--astro-code-token-comment: light-dark(#6e665c, #9a9286);
 		--astro-code-token-function: var(--color-ink);
-		--astro-code-token-parameter: #3d5566; /* Slate */
+		--astro-code-token-parameter: light-dark(#3d5566, #93abbd); /* Slate */
 		--astro-code-token-punctuation: var(--color-ink);
 		--astro-code-token-link: var(--color-accent);
 	}

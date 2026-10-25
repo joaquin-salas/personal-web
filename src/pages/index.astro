@@ -7,6 +7,7 @@ import Section from "@/components/Section.astro";
 import SectionNav from "@/components/SectionNav.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SocialLinks from "@/components/SocialLinks.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import { education } from "@/data/education";
 import { experience } from "@/data/experience";
 import { profile } from "@/data/profile";
@@ -51,8 +52,9 @@ const links = [...profile.links, { label: "Email", href: `mailto:${profile.email
 					<SectionNav sections={sections} />
 				</div>
 			</div>
-			<div class="mt-10 tall:mt-0">
+			<div class="mt-10 flex items-center gap-5 tall:mt-0">
 				<SocialLinks links={links} />
+				<ThemeToggle />
 			</div>
 		</header>
 
