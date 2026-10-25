@@ -1,19 +1,39 @@
 ---
-import { buildCommit, buildDate } from "@/lib/build";
-import { formatDate } from "@/lib/dates";
+import ExternalLink from "@/components/ExternalLink.astro";
+import { profile } from "@/data/profile";
 
 interface Props {}
+
+const link =
+	"text-ink underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-accent";
+// Evaluated at build time, so the year moves forward with the next deploy.
+const year = new Date().getFullYear();
 ---
 
 <footer class="space-y-1 border-t border-rule py-8 font-display text-sm text-muted">
-	<p>Self-hosted on Oracle Cloud.</p>
 	<p>
-		Built on <time datetime={buildDate.toISOString()}>{formatDate(buildDate)}</time>
-		{buildCommit && (
-			<span>
-				{" "}
-				from commit <code class="font-mono">{buildCommit}</code>
-			</span>
-		)}
+		Set in <em>Bricolage Grotesque</em> and <em>Literata</em>. Built with{" "}
+		<ExternalLink href="https://astro.build" class={link}>
+			Astro
+		</ExternalLink>{" "}
+		and{" "}
+		<ExternalLink href="https://tailwindcss.com/" class={link}>
+			Tailwind CSS
+		</ExternalLink>
+		, assisted by{" "}
+		<ExternalLink href="https://claude.com/claude-code" class={link}>
+			Claude Code
+		</ExternalLink>
+		.
+	</p>
+	<p>
+		Self-hosted on{" "}
+		<ExternalLink href="https://www.oracle.com/cloud/" class={link}>
+			Oracle Cloud
+		</ExternalLink>
+		.
+	</p>
+	<p>
+		&copy; {year} {profile.name}
 	</p>
 </footer>

@@ -8,9 +8,11 @@ interface Props {
 }
 
 const { href, class: className } = Astro.props;
+// Prettier puts link text on its own lines; trimmed, so underlines don't run into the spaces.
+const content = (await Astro.slots.render("default")).trim();
 ---
 
 <a href={href} target="_blank" rel="noopener noreferrer" class={className}>
-	<slot />
+	<Fragment set:html={content} />
 	<span class="sr-only"> (opens in a new tab)</span>
 </a>

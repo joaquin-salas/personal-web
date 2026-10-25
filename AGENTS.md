@@ -75,7 +75,7 @@ collapses to a single column. The structure is inspired by brittanychiang.com, b
 | Education             | Dates, degree, school                                                | `src/data/education.ts`           |
 | Projects              | Featured projects (title, description, stack) + link to `/projects/` | `projects` collection, `featured` |
 | Articles              | Latest 4 articles (month, title, description) + link to `/articles/` | `articles` collection             |
-| Footer                | Build stamp: build date and commit, "Self-hosted on Oracle Cloud"    | `src/lib/build.ts`                |
+| Footer                | Colophon (typefaces, tools, "Self-hosted on Oracle Cloud") and ©     | `src/data/profile.ts` (name)      |
 
 Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking
 home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top.
@@ -122,7 +122,7 @@ src/
 ├── content.config.ts         Collection schemas (frontmatter is validated at build time).
 ├── data/                     CV data as typed TS: profile.ts, experience.ts, education.ts.
 ├── lib/                      Logic with no markup: articles.ts, projects.ts (queries, sorting,
-│                             URLs), dates.ts (date formatting), build.ts (build date and commit).
+│                             URLs), dates.ts (date formatting).
 ├── pages/                    One file per URL. Fetch data from src/lib/ and compose components.
 │   ├── index.astro               → /
 │   ├── articles/index.astro      → /articles/
