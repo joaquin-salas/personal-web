@@ -1,33 +1,20 @@
 ---
-// The JS monogram: one line where the J loops into the S, with over/under gaps at the crossings.
-// Geometry copied from design/logo/build.mjs (the source of truth); keep them in sync. Uses
-// currentColor, so it takes the surrounding text color. Decorative: the name next to it carries
-// the meaning.
+// The JS monogram: one brush-pen stroke where the J loops into the S, with over/under gaps at the
+// crossings. The shapes come from design/logo/mark.mjs (the source of truth), computed at build
+// time. Uses currentColor, so it takes the surrounding text color. Decorative: the name next to it
+// carries the meaning.
+import { markShapes } from "../../design/logo/mark.mjs";
 
 interface Props {
 	/** Size utilities, e.g. `size-6`. */
 	class: string;
-	/** `regular` at 48px and up; `small` (thicker line) below 48px. */
+	/** `regular` at 48px and up; `small` (heavier, less contrast) below 48px. */
 	cut: "regular" | "small";
 }
 
 const { class: className, cut } = Astro.props;
 
-const cuts = {
-	regular: { stroke: 3.2, gap: 2.4, clip: 7 },
-	small: { stroke: 6.5, gap: 2.4, clip: 9 },
-};
-const { stroke, gap, clip } = cuts[cut];
-
-const full =
-	"M42 16 L42 62 C42 78 24 82 20 70 C17 60 32 56 46 54 C58 52 70 42 74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72";
-const loop = "M20 70 C17 60 32 56 46 54 C58 52 70 42 74 34";
-const s = "M74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72";
-// Where the loop crosses the J stem, and where the S spine crosses the rising line.
-const crossings = [
-	[42, 55],
-	[64, 46],
-];
+const { offset, crossings, strokes, halos, over } = markShapes(cut);
 
 // SVG ids are page-global; prefix them per cut so both cuts can share a page.
 const id = (name: string) => `js-${cut}-${name}`;
@@ -35,34 +22,31 @@ const id = (name: string) => `js-${cut}-${name}`;
 
 <svg class={className} viewBox="0 0 100 100" aria-hidden="true">
 	<defs>
-		{crossings.map(([cx, cy], i) => (
+		{crossings.map(({ cx, cy, clip, gap }, i) => (
 			<>
 				<clipPath id={id(`cross${i}`)}>
 					<circle cx={cx} cy={cy} r={clip} />
 				</clipPath>
 				<clipPath id={id(`gap${i}`)}>
-					<circle cx={cx} cy={cy} r={clip - 1} />
+					<circle cx={cx} cy={cy} r={gap} />
 				</clipPath>
 			</>
 		))}
 		<mask id={id("gaps")} maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
 			<rect x="-10" y="-10" width="120" height="120" fill="#fff"></rect>
-			<g fill="none" stroke="#000" stroke-width={stroke + gap * 2} stroke-linecap="round">
-				<path d={loop} clip-path={`url(#${id("gap0")})`}></path>
-				<path d={s} clip-path={`url(#${id("gap1")})`}></path>
-			</g>
+			{halos.map((d, i) => (
+				<path d={d} fill="#000" clip-path={`url(#${id(`gap${i}`)})`}></path>
+			))}
 		</mask>
 	</defs>
-	<g
-		transform="translate(3.5 2)"
-		fill="none"
-		stroke="currentColor"
-		stroke-width={stroke}
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	>
-		<path d={full} mask={`url(#${id("gaps")})`}></path>
-		<path d={loop} clip-path={`url(#${id("cross0")})`}></path>
-		<path d={s} clip-path={`url(#${id("cross1")})`}></path>
+	<g transform={offset} fill="currentColor">
+		<g mask={`url(#${id("gaps")})`}>
+			{strokes.map((d) => (
+				<path d={d}></path>
+			))}
+		</g>
+		{over.map((d, i) => (
+			<path d={d} clip-path={`url(#${id(`cross${i}`)})`}></path>
+		))}
 	</g>
 </svg>

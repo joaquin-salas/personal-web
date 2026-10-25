@@ -1,20 +1,20 @@
 # JS mark: usage guide
 
-The personal monogram of Joaquin Salas. One continuous fineliner line where the J loops into the S, with woven over/under gaps at the two crossings.
+The personal monogram of Joaquin Salas. One continuous brush-pen stroke where the J loops into the S: heavy on downstrokes, light on upstrokes, an angled cut where the brush lands at the top of the J, and a taper where it lifts off at the end of the S. The two crossings are woven over/under.
 
 ## 1. Which version at which size
 
 | Size | File | Why |
 |---|---|---|
-| 48 px and larger | `js-mark.svg` (regular) | The fine line is the mark's character |
-| Below 48 px | `js-mark-small.svg` (small) | Thicker line so it survives small sizes |
+| 48 px and larger | `js-mark.svg` (regular) | Full brush contrast is the mark's character |
+| Below 48 px | `js-mark-small.svg` (small) | Heavier, less contrast, so the thin upstrokes survive |
 | Never below 16 px | — | Below the favicon size it stops reading as JS |
 
 ## 2. Clear space
 
 Keep empty space on every side of the mark of at least **¼ of the mark's width**. Nothing goes inside that zone: no text, edges or other graphics.
 
-The avatar and app icon PNGs already include this space, so circle crops never cut the line.
+The avatar and app icon PNGs already include this space, so circle crops never cut the stroke.
 
 ## 3. Colors
 
@@ -44,10 +44,10 @@ Always one color. `js-mark.svg` uses `currentColor`, so on the website it takes 
 
 ## Rebuilding
 
-All files are generated from one geometry definition. To regenerate them (requires Node and Google Chrome):
+The mark is drawn in `mark.mjs` and every file is generated from it. To regenerate them (requires Node and Google Chrome):
 
 ```
 node design/logo/build.mjs
 ```
 
-Backups of the alternative directions are in `design/logo-variants/backup/`.
+The previous monoline logo is in `design/older-logo/`. Backups of the alternative directions are in `design/logo-variants/backup/`.

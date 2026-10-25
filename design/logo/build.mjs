@@ -1,10 +1,12 @@
-// Builds every JS mark file from one geometry definition.
+// Builds the brush-pen version of the JS mark (05C geometry, stroke style D).
+// The mark itself is drawn in mark.mjs.
 // Usage: node design/logo/build.mjs
 // Needs Google Chrome (for PNG export). No npm dependencies.
 import { writeFileSync, readFileSync, mkdirSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { markSvg } from "./mark.mjs";
 
 const OUT = dirname(fileURLToPath(import.meta.url));
 const PNG = join(OUT, "png");
@@ -15,57 +17,6 @@ const INK = "#111111";
 const PAPER = "#FAFAF8";
 const INK_DARK = "#F2F2EE"; // ink on dark backgrounds
 const PAPER_DARK = "#0E0E0E";
-
-// Geometry (100x100 box). One continuous fineliner stroke: J loops into S.
-// Woven crossings: the loop passes over the J stem, the S spine passes over the rising line.
-const G = {
-  full: "M42 16 L42 62 C42 78 24 82 20 70 C17 60 32 56 46 54 C58 52 70 42 74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72",
-  loop: "M20 70 C17 60 32 56 46 54 C58 52 70 42 74 34",
-  s: "M74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72",
-  cross1: [42, 55], // loop over stem
-  cross2: [64, 46], // S spine over rising line
-  offset: "translate(3.5 2)",
-};
-
-// Two optical cuts: regular for >= 48px, small for favicons and tiny UI.
-const CUTS = {
-  regular: { stroke: 3.2, gap: 2.4, clip: 7 },
-  small: { stroke: 6.5, gap: 2.4, clip: 9 },
-};
-
-function markSvg({ cut = "regular", color = "currentColor", size = 512, bg = null, scale = 1, style = "" }) {
-  const c = CUTS[cut];
-  const halo = c.stroke + c.gap * 2;
-  const [x1, y1] = G.cross1;
-  const [x2, y2] = G.cross2;
-  // Scale around the centre of the box (for padded avatar/app icons).
-  const fit = scale === 1 ? "" : `translate(50 50) scale(${scale}) translate(-50 -50) `;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="JS">
-${style ? `  <style>${style}</style>\n` : ""}  <defs>
-    <path id="full" d="${G.full}"/>
-    <path id="loop" d="${G.loop}"/>
-    <path id="s" d="${G.s}"/>
-    <clipPath id="c1"><circle cx="${x1}" cy="${y1}" r="${c.clip}"/></clipPath>
-    <clipPath id="c2"><circle cx="${x2}" cy="${y2}" r="${c.clip}"/></clipPath>
-    <!-- Gap areas are 1 unit smaller than the redrawn strands so their edges overlap (no anti-alias seams). -->
-    <clipPath id="g1"><circle cx="${x1}" cy="${y1}" r="${c.clip - 1}"/></clipPath>
-    <clipPath id="g2"><circle cx="${x2}" cy="${y2}" r="${c.clip - 1}"/></clipPath>
-    <mask id="gaps" maskUnits="userSpaceOnUse" x="-10" y="-10" width="120" height="120">
-      <rect x="-10" y="-10" width="120" height="120" fill="#fff"/>
-      <g fill="none" stroke="#000" stroke-width="${halo}" stroke-linecap="round">
-        <use href="#loop" clip-path="url(#g1)"/>
-        <use href="#s" clip-path="url(#g2)"/>
-      </g>
-    </mask>
-  </defs>
-${bg ? `  <rect width="100" height="100" fill="${bg}"/>\n` : ""}  <g class="ink" transform="${fit}${G.offset}" fill="none" stroke="${color}" stroke-width="${c.stroke}" stroke-linecap="round" stroke-linejoin="round">
-    <use href="#full" mask="url(#gaps)"/>
-    <use href="#loop" clip-path="url(#c1)"/>
-    <use href="#s" clip-path="url(#c2)"/>
-  </g>
-</svg>
-`;
-}
 
 const svgs = {
   // Inline on the website: inherits text color, so it follows light/dark mode automatically.
@@ -78,7 +29,7 @@ const svgs = {
     cut: "small",
     color: INK,
     size: 32,
-    style: `.ink{stroke:${INK}}@media (prefers-color-scheme:dark){.ink{stroke:${INK_DARK}}}`,
+    style: `.ink{fill:${INK}}@media (prefers-color-scheme:dark){.ink{fill:${INK_DARK}}}`,
   }),
 };
 for (const [name, body] of Object.entries(svgs)) writeFileSync(join(OUT, name), body);

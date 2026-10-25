@@ -86,8 +86,9 @@ The full creative brief is `design/BRIEF.md`; check it before any visual change.
 text-first pages that read like a well-set book. Warm paper, warm black ink and one accent; Granada
 is only an undertone. The oversized condensed name on the home page is the one bold element.
 
-- Logo: the JS monogram (`Monogram` component), one line in `ink`. Its source files and usage
-  guide live in `design/logo/` (`USAGE.md`): the `regular` cut at 48px and up, `small` below.
+- Logo: the JS monogram (`Monogram` component), one brush-pen stroke in `ink`. Its source files
+  and usage guide live in `design/logo/` (`USAGE.md`): the `regular` cut at 48px and up, `small`
+  below. The previous monoline logo is kept in `design/older-logo/`.
 - Palette (tokens in `global.css`): `background` paper, `ink` warm black, `muted` (dates,
   descriptions, draft labels), `rule` (dividers, timeline), `accent` almagra clay red (links, focus,
   note callouts; the only accent), `caution` deep ochre (warning callouts), `code` (code
@@ -138,8 +139,9 @@ src/
 ├── assets/                   Images used by components (optimized by Astro).
 └── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
 public/                       Copied as-is to the site root (favicons, cv.pdf, robots.txt).
-design/                       Logo source files and their build script. Not part of the site;
-                              the favicons in `public/` are copied from `design/logo/`.
+design/                       Logo source files and their build script. Not shipped as files:
+                              the favicons in `public/` are copied from `design/logo/`, and
+                              `Monogram` imports `design/logo/mark.mjs` at build time.
 ```
 
 ### Where does new code go?
