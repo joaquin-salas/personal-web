@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="JS monogram, 02 Italic Ligature">
+  <!-- Backup. Broad nib at 35deg simulated by 11 offset copies of one continuous centerline. -->
+  <defs>
+    <path id="P" d="M38 20 L36 62 C35 74 28 82 20 78 C16 76 16 70 20 68 C34 60 56 40 74 28 C66 22 52 24 52 34 C52 44 72 48 72 62 C72 74 58 80 48 74"/>
+  </defs>
+  <g transform="translate(4 0)" fill="none" stroke="#111111" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#P" transform="translate(-4.1 2.87)"/><use href="#P" transform="translate(-3.28 2.29)"/><use href="#P" transform="translate(-2.46 1.72)"/><use href="#P" transform="translate(-1.64 1.15)"/><use href="#P" transform="translate(-0.82 0.57)"/><use href="#P"/><use href="#P" transform="translate(0.82 -0.57)"/><use href="#P" transform="translate(1.64 -1.15)"/><use href="#P" transform="translate(2.46 -1.72)"/><use href="#P" transform="translate(3.28 -2.29)"/><use href="#P" transform="translate(4.1 -2.87)"/>
+  </g>
+</svg>

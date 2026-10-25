@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="JS monogram, 03 Woven">
+  <!-- Backup. Monoline weave: J bar over S, S tail over J hook. Halo (#FAFAF8) makes the gaps; change it to match the background. -->
+  <defs>
+    <path id="J" d="M46 22 L46 62 C46 78 30 82 24 70"/>
+    <path id="B" d="M33 22 L67 22"/>
+    <path id="T" d="M46 22 L46 34"/>
+    <path id="S" d="M76 37 C74 31 69 28 63 28 C56 28 52 33 52 39 C52 52 76 50 76 66 C76 76 68 81 58 81 C49 81 41 77 36 70"/>
+  </defs>
+  <g transform="translate(0 -1.5)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#J" stroke="#111111" stroke-width="8"/>
+    <use href="#S" stroke="#FAFAF8" stroke-width="15"/>
+    <use href="#S" stroke="#111111" stroke-width="8"/>
+    <use href="#B" stroke="#FAFAF8" stroke-width="15"/>
+    <use href="#B" stroke="#111111" stroke-width="8"/>
+    <use href="#T" stroke="#111111" stroke-width="8"/>
+  </g>
+</svg>

@@ -2,6 +2,5 @@ dist/
 .astro/
 node_modules/
 pnpm-lock.yaml
-# Installed by `npx skills add`; keep as published so skills-lock.json hashes match.
-.claude/skills/
-skills-lock.json
+# Logo source files, kept as the build script writes them.
+design/

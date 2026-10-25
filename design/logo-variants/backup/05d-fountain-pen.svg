@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="JS monogram, 05D Fountain pen">
+  <!-- Backup. Pen-pressure contrast: 5 offset copies along a 35deg nib. -->
+  <defs><path id="P" d="M42 16 L42 62 C42 78 24 82 20 70 C17 60 32 56 46 54 C58 52 70 42 74 34 C70 26 58 26 55 34 C52 42 74 48 74 60 C73 72 60 78 50 72"/></defs>
+  <g transform="translate(3.5 2)" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#P" transform="translate(-1.64 1.15)"/><use href="#P" transform="translate(-0.82 0.57)"/><use href="#P"/><use href="#P" transform="translate(0.82 -0.57)"/><use href="#P" transform="translate(1.64 -1.15)"/>
+  </g>
+</svg>

@@ -1,5 +1,5 @@
 ---
-import StarMark from "@/components/StarMark.astro";
+import Monogram from "@/components/Monogram.astro";
 
 // Top bar for every page except the home page, which has its own sticky header.
 
@@ -14,7 +14,7 @@ const current = Astro.url.pathname;
 
 <header class="flex items-center justify-between gap-6 py-8 font-display">
 	<a href="/" class="flex items-center gap-2 font-semibold hover:text-accent">
-		<StarMark class="size-5" />
+		<Monogram class="size-6" cut="small" />
 		Joaquín Salas
 	</a>
 	<nav aria-label="Main">

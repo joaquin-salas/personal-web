@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="JS monogram, 01 Textura">
+  <!-- Backup. Broad nib at 40deg simulated by 13 offset copies of each centerline. Halo (#FAFAF8) separates S from J; change it to match the background. -->
+  <defs>
+    <path id="J" d="M30 24 L38 18 L42 24 L42 66 L35 78 L24 81 L17 75"/>
+    <path id="S" d="M76 32 L70 27 L56 28 L46 36 L47 45 L68 58 L71 68 L66 77 L54 80 L49 75"/>
+    <g id="Jn"><use href="#J" transform="translate(-4.6 3.86)"/><use href="#J" transform="translate(-3.83 3.21)"/><use href="#J" transform="translate(-3.06 2.57)"/><use href="#J" transform="translate(-2.3 1.93)"/><use href="#J" transform="translate(-1.53 1.29)"/><use href="#J" transform="translate(-0.77 0.64)"/><use href="#J"/><use href="#J" transform="translate(0.77 -0.64)"/><use href="#J" transform="translate(1.53 -1.29)"/><use href="#J" transform="translate(2.3 -1.93)"/><use href="#J" transform="translate(3.06 -2.57)"/><use href="#J" transform="translate(3.83 -3.21)"/><use href="#J" transform="translate(4.6 -3.86)"/></g>
+    <g id="Sn"><use href="#S" transform="translate(-4.6 3.86)"/><use href="#S" transform="translate(-3.83 3.21)"/><use href="#S" transform="translate(-3.06 2.57)"/><use href="#S" transform="translate(-2.3 1.93)"/><use href="#S" transform="translate(-1.53 1.29)"/><use href="#S" transform="translate(-0.77 0.64)"/><use href="#S"/><use href="#S" transform="translate(0.77 -0.64)"/><use href="#S" transform="translate(1.53 -1.29)"/><use href="#S" transform="translate(2.3 -1.93)"/><use href="#S" transform="translate(3.06 -2.57)"/><use href="#S" transform="translate(3.83 -3.21)"/><use href="#S" transform="translate(4.6 -3.86)"/></g>
+  </defs>
+  <g transform="translate(3.5 0)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <use href="#Jn" stroke="#111111" stroke-width="1.9"/>
+    <use href="#Sn" stroke="#FAFAF8" stroke-width="7"/>
+    <use href="#Sn" stroke="#111111" stroke-width="1.9"/>
+  </g>
+</svg>

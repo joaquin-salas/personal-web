@@ -77,7 +77,7 @@ collapses to a single column. The structure is inspired by brittanychiang.com, b
 | Articles              | Latest 4 articles (month, title, description) + link to `/articles/` | `articles` collection             |
 | Footer                | Build stamp: build date and commit, "Self-hosted on Oracle Cloud"    | `src/lib/build.ts`                |
 
-Every other page uses `PageLayout`: a single column with `SiteHeader` (star mark + name linking
+Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking
 home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top.
 
 ### Design direction ("Albaicín")
@@ -85,9 +85,11 @@ home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseL
 The visual identity comes from Granada: lime-washed walls, cypress green, Nasrid tile cobalt and
 ochre. Keep it restrained; the oversized condensed name on the home page is the one bold element.
 
+- Logo: the JS monogram (`Monogram` component), one line in `ink`. Its source files and usage
+  guide live in `design/logo/` (`USAGE.md`): the `regular` cut at 48px and up, `small` below.
 - Palette (tokens in `global.css`): `background` lime wash, `ink` cypress, `muted` sage, `rule`
-  plaster, `accent` azulejo blue (links, focus, note callouts), `mark` ochre (only the eight-point
-  star mark), `caution` almagra red (warning callouts).
+  plaster, `accent` azulejo blue (links, focus, note callouts), `mark` ochre (draft labels, quote
+  borders), `caution` almagra red (warning callouts).
 - Type: Bricolage Grotesque (`font-display`: name, headings, UI), Source Serif 4 (`font-serif`: body
   and article text), JetBrains Mono (`font-mono`: code only). Self-hosted via Fontsource.
 - Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
@@ -118,11 +120,13 @@ src/
 │                             PageLayout   Single column + SiteHeader + SiteFooter (all but home).
 │                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
 ├── components/               Reusable UI with typed Props: ArticleCard, Callout (for .mdx),
-│                             ExperienceItem, ExternalLink, ProjectCard, Section, SectionNav,
-│                             SiteHeader, SiteFooter, SocialLinks, StarMark, TagList.
+│                             ExperienceItem, ExternalLink, Monogram, ProjectCard, Section,
+│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TagList.
 ├── assets/                   Images used by components (optimized by Astro).
 └── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
-public/                       Copied as-is to the site root (favicon.svg, cv.pdf, robots.txt).
+public/                       Copied as-is to the site root (favicons, cv.pdf, robots.txt).
+design/                       Logo source files and their build script. Not part of the site;
+                              the favicons in `public/` are copied from `design/logo/`.
 ```
 
 ### Where does new code go?
