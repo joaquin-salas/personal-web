@@ -16,13 +16,14 @@ reverse proxy. There is no backend and no database: everything is built to stati
 
 ## Commands
 
-| Command        | What it does                                             |
-| -------------- | -------------------------------------------------------- |
-| `pnpm dev`     | Dev server at http://localhost:4321 (drafts visible)     |
-| `pnpm check`   | Type-check (`astro check`) + formatting check (Prettier) |
-| `pnpm format`  | Format every file with Prettier                          |
-| `pnpm build`   | Type-check, then build the static site into `dist/`      |
-| `pnpm preview` | Serve `dist/` locally to test the production build       |
+| Command                     | What it does                                                    |
+| --------------------------- | --------------------------------------------------------------- |
+| `pnpm dev`                  | Dev server at http://localhost:4321 (drafts visible)            |
+| `pnpm check`                | Type-check (`astro check`) + formatting check (Prettier)        |
+| `pnpm format`               | Format every file with Prettier                                 |
+| `pnpm build`                | Type-check, then build the static site into `dist/`             |
+| `pnpm preview`              | Serve `dist/` locally to test the production build              |
+| `docker compose up --build` | Build and run the production container at http://localhost:8080 |
 
 Run `pnpm check` after every change and fix all errors and warnings before considering a task done.
 
@@ -142,6 +143,11 @@ public/                       Copied as-is to the site root (favicons, cv.pdf, r
 design/                       Logo source files and their build script. Not shipped as files:
                               the favicons in `public/` are copied from `design/logo/`, and
                               `Monogram` imports `design/logo/mark.mjs` at build time.
+deploy/                       Server-side files: nginx.conf (the container's web server).
+Dockerfile                    Production image: builds the site, serves `dist/` with nginx on 8080.
+compose.yaml                  Runs that image locally for testing.
+.github/workflows/build.yml   On push to main: `pnpm check`, then build the image (arm64 + amd64)
+                              and push it to ghcr.io/joaquin-salas/personal-web.
 ```
 
 ### Where does new code go?

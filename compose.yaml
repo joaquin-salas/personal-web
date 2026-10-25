@@ -1,0 +1,7 @@
+# Local test of the production image: `docker compose up --build`, then http://localhost:8080.
+# The server uses deploy/compose.yaml instead.
+services:
+  personal-web:
+    build: .
+    ports:
+      - "8080:8080"

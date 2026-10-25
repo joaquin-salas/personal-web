@@ -1,0 +1,19 @@
+# Keep the build context small: only what `pnpm build` needs.
+node_modules/
+dist/
+.astro/
+.git/
+.github/
+.claude/
+.vscode/
+.idea/
+.env
+.env.*
+*.log
+/*.md
+compose.yaml
+deploy/compose.yaml
+
+# Monogram imports design/logo/mark.mjs at build time; the rest of design/ isn't needed.
+design/*
+!design/logo/

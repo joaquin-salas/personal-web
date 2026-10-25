@@ -12,6 +12,9 @@ pnpm dev      # http://localhost:4321
 
 Before committing: `pnpm check` (types + formatting). `pnpm format` fixes formatting.
 
+To try the production container (what runs on the server): `docker compose up --build`, then open
+http://localhost:8080. Stop it with `docker compose down`.
+
 ## Where to change things
 
 | I want to…                       | Edit                                         |
