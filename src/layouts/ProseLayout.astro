@@ -38,7 +38,7 @@ const { title, description, pubDate, updatedDate, cover } = Astro.props;
 			{cover && <Image src={cover.src} alt={cover.alt} class="mt-10 w-full" />}
 		</header>
 
-		<div class="prose prose-lg max-w-none prose-albaicin prose-headings:font-display prose-headings:tracking-tight prose-a:underline-offset-4 prose-code:font-normal [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-rule [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 prose-code:before:content-none prose-code:after:content-none prose-pre:border prose-pre:border-rule">
+		<div class="prose max-w-none prose-almagra">
 			<slot />
 		</div>
 	</article>

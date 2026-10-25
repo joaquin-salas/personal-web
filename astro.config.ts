@@ -8,8 +8,8 @@ export default defineConfig({
 	site: "https://joaquinsalas.dev",
 
 	markdown: {
-		// Light code blocks that sit on the page instead of dark slabs.
-		shikiConfig: { theme: "github-light" },
+		// Syntax colors come from the --astro-code-* tokens in global.css, so they follow the palette.
+		shikiConfig: { theme: "css-variables" },
 	},
 
 	vite: {

@@ -1,28 +1,33 @@
 /* Self-hosted variable fonts. "standard" includes Bricolage's width axis (condensed name). */
 @import "@fontsource-variable/bricolage-grotesque/standard.css";
-@import "@fontsource-variable/source-serif-4/opsz.css";
-@import "@fontsource-variable/source-serif-4/opsz-italic.css";
+@import "@fontsource-variable/literata/opsz.css";
+@import "@fontsource-variable/literata/opsz-italic.css";
 @import "@fontsource-variable/jetbrains-mono";
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 /*
- * Design tokens: the only place colors and fonts are defined. Change a value here and the whole
- * site follows. Palette inspired by Granada's Albaicín: lime-washed walls, cypress, Nasrid tiles.
+ * Design tokens: the only place colors, fonts and the page width are defined. Change a value here
+ * and the whole site follows. Palette "Almagra" (see design/BRIEF.md): warm paper, warm black ink
+ * and one accent, the clay red of Granada's walls. Contrast on paper: ink 15.7, muted 5.8,
+ * accent 6.2, caution 5.4.
  */
 @theme {
-	--color-background: #f3f3ef; /* Lime wash */
-	--color-ink: #17261f; /* Cypress: main text */
-	--color-muted: #5d6b63; /* Sage: dates, descriptions */
-	--color-rule: #dcdfd8; /* Plaster: dividers, timeline */
-	--color-accent: #2a4fa8; /* Azulejo: links, focus */
-	--color-mark: #b9832b; /* Ochre: draft labels, quote borders */
-	--color-caution: #9c3d2a; /* Almagra: warnings */
+	--color-background: #f7f4ee; /* Paper */
+	--color-ink: #1d1b18; /* Warm black: main text */
+	--color-muted: #655f57; /* Dates, descriptions, draft labels */
+	--color-rule: #e7e1d6; /* Dividers, timeline */
+	--color-accent: #9e3b26; /* Almagra: links, focus, note callouts. The only accent. */
+	--color-caution: #8a5a12; /* Deep ochre: warning callouts */
+	--color-code: #efe9df; /* Code block and inline code background */
 
 	--font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-serif: "Source Serif 4 Variable", Georgia, serif;
+	--font-serif: "Literata Variable", Georgia, serif;
 	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+	/* Content width of single-column pages (about 92 characters of body text per line). */
+	--container-page: 48rem;
 }
 
 /*
@@ -32,6 +37,21 @@
 @custom-variant tall (@media (min-width: 64rem) and (min-height: 37.5rem));
 
 @layer base {
+	:root {
+		/* Syntax colors for Shiki's `css-variables` theme (astro.config.ts). ≥ 4.5:1 on --color-code. */
+		--astro-code-foreground: var(--color-ink);
+		--astro-code-background: var(--color-code);
+		--astro-code-token-keyword: var(--color-accent);
+		--astro-code-token-constant: var(--color-accent);
+		--astro-code-token-string: #5f5a1f; /* Olive */
+		--astro-code-token-string-expression: #5f5a1f;
+		--astro-code-token-comment: #6e665c;
+		--astro-code-token-function: var(--color-ink);
+		--astro-code-token-parameter: #3d5566; /* Slate */
+		--astro-code-token-punctuation: var(--color-ink);
+		--astro-code-token-link: var(--color-accent);
+	}
+
 	html {
 		@apply bg-background font-serif text-ink antialiased;
 	}
@@ -45,8 +65,11 @@
 	}
 }
 
-/* Colors for Markdown bodies (`prose prose-albaicin`), mapped to the tokens above. */
-@utility prose-albaicin {
+/*
+ * Markdown bodies (`prose prose-almagra`): colors mapped to the tokens, reading size, code. Plain
+ * CSS outside Tailwind's layers on purpose, so it always overrides the typography plugin's defaults.
+ */
+.prose-almagra {
 	--tw-prose-body: var(--color-ink);
 	--tw-prose-headings: var(--color-ink);
 	--tw-prose-lead: var(--color-muted);
@@ -55,10 +78,80 @@
 	--tw-prose-counters: var(--color-muted);
 	--tw-prose-bullets: var(--color-muted);
 	--tw-prose-hr: var(--color-rule);
-	--tw-prose-quotes: var(--color-ink);
-	--tw-prose-quote-borders: var(--color-mark);
+	--tw-prose-quotes: var(--color-muted);
+	--tw-prose-quote-borders: var(--color-rule);
 	--tw-prose-captions: var(--color-muted);
 	--tw-prose-code: var(--color-ink);
+	--tw-prose-pre-code: var(--color-ink);
+	--tw-prose-pre-bg: var(--color-code);
 	--tw-prose-th-borders: var(--color-rule);
 	--tw-prose-td-borders: var(--color-rule);
+
+	font-size: 1.125rem;
+	line-height: 1.7;
+
+	& :where(h2, h3, h4) {
+		font-family: var(--font-display);
+		letter-spacing: -0.01em;
+	}
+	& :where(h2) {
+		font-size: 1.75rem;
+		line-height: 1.2;
+		margin-top: 2em;
+		margin-bottom: 0.6em;
+	}
+	& :where(h3) {
+		font-size: 1.3125rem;
+		line-height: 1.3;
+		margin-top: 1.8em;
+		margin-bottom: 0.5em;
+	}
+	& :where(a) {
+		text-underline-offset: 0.2em;
+		text-decoration-thickness: 1px;
+	}
+	& :where(blockquote) {
+		font-weight: 400;
+	}
+	& :where(blockquote p)::before,
+	& :where(blockquote p)::after {
+		content: none;
+	}
+
+	/* Inline code: a tinted chip, no backticks. */
+	& :where(:not(pre) > code) {
+		background-color: var(--color-code);
+		border-radius: 0.25rem;
+		padding: 0.1em 0.35em;
+		font-size: 0.85em;
+		font-weight: 400;
+	}
+	& :where(:not(pre) > code)::before,
+	& :where(:not(pre) > code)::after {
+		content: none;
+	}
+
+	/* Code blocks: paper-toned, no border, with the language as a small label. */
+	& :where(pre) {
+		position: relative;
+		border-radius: 0.375rem;
+		padding: 1.25rem 1.375rem;
+		font-size: 0.875rem;
+		line-height: 1.65;
+		tab-size: 4;
+	}
+	& :where(pre[data-language]:not([data-language="plaintext"]))::before {
+		content: attr(data-language);
+		position: absolute;
+		top: 0.375rem;
+		right: 0.625rem;
+		font-family: var(--font-display);
+		font-size: 0.6875rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--color-muted);
+	}
+	& :where(pre span[style*="--astro-code-token-comment"]) {
+		font-style: italic;
+	}
 }

@@ -80,18 +80,25 @@ collapses to a single column. The structure is inspired by brittanychiang.com, b
 Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking
 home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top.
 
-### Design direction ("Albaicín")
+### Design direction ("Almagra")
 
-The visual identity comes from Granada: lime-washed walls, cypress green, Nasrid tile cobalt and
-ochre. Keep it restrained; the oversized condensed name on the home page is the one bold element.
+The full creative brief is `design/BRIEF.md`; check it before any visual change. In short: quiet,
+text-first pages that read like a well-set book. Warm paper, warm black ink and one accent; Granada
+is only an undertone. The oversized condensed name on the home page is the one bold element.
 
 - Logo: the JS monogram (`Monogram` component), one line in `ink`. Its source files and usage
   guide live in `design/logo/` (`USAGE.md`): the `regular` cut at 48px and up, `small` below.
-- Palette (tokens in `global.css`): `background` lime wash, `ink` cypress, `muted` sage, `rule`
-  plaster, `accent` azulejo blue (links, focus, note callouts), `mark` ochre (draft labels, quote
-  borders), `caution` almagra red (warning callouts).
-- Type: Bricolage Grotesque (`font-display`: name, headings, UI), Source Serif 4 (`font-serif`: body
-  and article text), JetBrains Mono (`font-mono`: code only). Self-hosted via Fontsource.
+- Palette (tokens in `global.css`): `background` paper, `ink` warm black, `muted` (dates,
+  descriptions, draft labels), `rule` (dividers, timeline), `accent` almagra clay red (links, focus,
+  note callouts; the only accent), `caution` deep ochre (warning callouts), `code` (code
+  backgrounds).
+- Type: Bricolage Grotesque (`font-display`: name, headings, UI), Literata (`font-serif`: body and
+  article text, 18px / 1.7 in articles), JetBrains Mono (`font-mono`: code only). Self-hosted via
+  Fontsource.
+- Width: single-column pages are `max-w-page` (the `--container-page` token, 48rem). Header,
+  title and body share that one column; don't narrow text inside it.
+- Code: Shiki's `css-variables` theme, colored by the `--astro-code-*` tokens in `global.css`.
+  Blocks show their language as a small label; no copy button.
 - Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
   stacks and tags are plain comma-separated text, not chips.
 - Structure carries meaning: the timeline line is only on experience because it is chronological.
@@ -189,9 +196,9 @@ design/                       Logo source files and their build script. Not part
   token-based classes (`bg-background`, `text-accent`), not raw values (`bg-[#0a192f]`).
 - Tailwind classes live only in components, layouts and pages, never in `src/content/` or
   `src/data/`.
-- Markdown bodies are styled in one place: the `prose prose-albaicin` wrapper in `ProseLayout`
-  (colors mapped to tokens by the `prose-albaicin` utility in `global.css`).
-- Code blocks use Shiki's `github-light` theme (`astro.config.ts`).
+- Markdown bodies are styled in one place: the `prose prose-almagra` wrapper in `ProseLayout`
+  (colors, sizes and code mapped to tokens by the `.prose-almagra` rules in `global.css`).
+- Code blocks use Shiki's `css-variables` theme (`astro.config.ts`), colored from `global.css`.
 - No custom CSS files besides `global.css` unless Tailwind truly can't express something.
 
 ### Markup and accessibility

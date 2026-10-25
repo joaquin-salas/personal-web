@@ -22,7 +22,7 @@ const { title, description, pubDate, draft } = article.data;
 			<a href={getArticleUrl(article)} class="hover:text-accent hover:underline underline-offset-4">
 				{title}
 			</a>
-			{draft && <span class="ml-2 text-sm font-normal text-mark">Draft</span>}
+			{draft && <span class="ml-2 text-sm font-normal text-muted italic">Draft</span>}
 		</h3>
 		<p class="mt-1 text-muted">{description}</p>
 	</div>
