@@ -148,6 +148,7 @@ Dockerfile                    Production image: builds the site, serves `dist/` 
 compose.yaml                  Runs that image locally for testing.
 .github/workflows/build.yml   On push to main: `pnpm check`, then build the image (arm64 + amd64)
                               and push it to ghcr.io/joaquin-salas/personal-web.
+.claude/agents/               Claude Code subagents: english-reviewer.md (language review of content).
 ```
 
 ### Where does new code go?
@@ -188,6 +189,13 @@ compose.yaml                  Runs that image locally for testing.
 - Available in `.mdx`: `<Callout type="note | warning">` (import it from
   `@/components/Callout.astro`). Leave blank lines inside the tags so the content is Markdown.
 - Links to other sites in components use `ExternalLink` (opens a new tab). `mailto:` links don't.
+
+### Writing
+
+- The owner writes all content (articles, projects, CV text) by hand, in British English. Don't
+  write or edit prose in `src/content/` or `src/data/` unless explicitly asked.
+- To check the English of a file, use the `english-reviewer` subagent
+  (`.claude/agents/english-reviewer.md`). It is read-only and reports problems; the owner fixes them.
 
 ### CV data (`src/data/`)
 
