@@ -244,8 +244,11 @@ compose.yaml                  Runs that image locally for testing.
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `chore:`, `content:` (new
   or edited articles, projects or CV data). Example: `feat(home): add experience section`.
-- Commit directly to `main`: this is a single-person project. Don't create branches unless the
-  owner explicitly asks for one.
+- Work on the `dev` branch: commit and push there. `main` is what gets published (every push to
+  `main` builds and pushes the production image), so it only changes by merging `dev` into it.
+  Don't create other branches unless the owner explicitly asks for one.
+- Merge to `main` only when the owner asks, as a fast-forward:
+  `git switch main && git merge --ff-only dev && git push origin main && git switch dev`.
 - Don't commit or push on your own. Leave changes uncommitted so the owner can review them, and
   commit (or push) only when asked.
 - `pnpm check` must pass before committing.
