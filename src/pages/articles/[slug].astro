@@ -13,10 +13,10 @@ export const getStaticPaths = (async () => {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { article } = Astro.props;
-const { Content } = await render(article);
+const { Content, headings } = await render(article);
 ---
 
-<ProseLayout {...article.data}>
+<ProseLayout {...article.data} headings={headings}>
 	<TagList slot="meta" tags={article.data.tags} label="Tags" />
 	<Content />
 </ProseLayout>

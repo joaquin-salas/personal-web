@@ -1,0 +1,117 @@
+---
+import type { MarkdownHeading } from "astro";
+
+// "On this page" rail in the right margin of articles and projects: one line per section, the
+// current one in ink. Hovering or tabbing into it fades in a panel with the section titles. The
+// links work without JavaScript; the script only marks the current section. Hidden where there's
+// no margin for it.
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const sections = Astro.props.headings.filter(({ depth }) => depth === 2 || depth === 3);
+---
+
+{sections.length >= 2 && (
+	<nav
+		aria-label="On this page"
+		data-toc
+		class="group fixed top-1/2 right-6 z-10 hidden -translate-y-1/2 font-display text-sm lg:block"
+	>
+		{/* The rail is only a picture of the panel; the panel holds the real links. */}
+		<ol
+			aria-hidden="true"
+			data-toc-rail
+			class="p-3 group-hover:opacity-0 group-has-[:focus-visible]:opacity-0 group-data-open:opacity-0 motion-safe:transition-opacity motion-safe:duration-150"
+		>
+			{sections.map(({ depth }) => (
+				<li class="flex justify-end py-1.5">
+					<span
+						data-toc-line
+						class:list={[
+							"block h-0.5 rounded-full bg-rule data-current:bg-ink",
+							depth === 2 ? "w-5" : "w-3",
+						]}
+					/>
+				</li>
+			))}
+		</ol>
+		{/*
+			Invisible at rest but still focusable. Opens on hover (mouse), keyboard focus, or
+			`data-open` (set by the script when the rail is tapped: touch screens have no hover).
+		*/}
+		<ol class="pointer-events-none absolute top-1/2 right-0 max-h-[70vh] w-60 translate-x-2 -translate-y-1/2 overflow-y-auto rounded-md border border-rule bg-background p-3 opacity-0 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:translate-x-0 group-has-[:focus-visible]:opacity-100 group-data-open:pointer-events-auto group-data-open:translate-x-0 group-data-open:opacity-100 motion-safe:transition-[opacity,translate] motion-safe:duration-150 motion-safe:ease-out">
+			{sections.map(({ depth, slug, text }) => (
+				<li>
+					<a
+						href={`#${slug}`}
+						data-toc-link
+						class:list={[
+							"block rounded px-2 py-1 text-muted hover:text-ink aria-[current=location]:text-accent",
+							depth === 3 && "ml-3",
+						]}
+					>
+						{text}
+					</a>
+				</li>
+			))}
+		</ol>
+	</nav>
+)}
+
+<script>
+	const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")];
+	const lines = [...document.querySelectorAll<HTMLElement>("[data-toc-line]")];
+	const headings = links.map((link) => document.getElementById(link.hash.slice(1)));
+
+	// The current section is the last heading above the top third of the screen (the first one
+	// before reaching any).
+	function update() {
+		const line = innerHeight / 3;
+		let current = 0;
+		headings.forEach((heading, i) => {
+			if (heading && heading.getBoundingClientRect().top <= line) current = i;
+		});
+		links.forEach((link, i) => {
+			if (i === current) link.setAttribute("aria-current", "location");
+			else link.removeAttribute("aria-current");
+			lines[i]?.toggleAttribute("data-current", i === current);
+		});
+	}
+
+	// Touch: tapping the rail opens the panel; choosing a section, tapping outside or Escape
+	// closes it.
+	const toc = document.querySelector<HTMLElement>("[data-toc]");
+	if (toc) {
+		const close = () => toc.removeAttribute("data-open");
+		toc.querySelector("[data-toc-rail]")?.addEventListener("click", () => {
+			toc.setAttribute("data-open", "");
+		});
+		for (const link of links) link.addEventListener("click", close);
+		document.addEventListener("click", (event) => {
+			if (!toc.contains(event.target as Node)) close();
+		});
+		document.addEventListener("keydown", (event) => {
+			if (event.key === "Escape") close();
+		});
+	}
+
+	if (links.length) {
+		let queued = false;
+		addEventListener(
+			"scroll",
+			() => {
+				if (queued) return;
+				queued = true;
+				requestAnimationFrame(() => {
+					queued = false;
+					update();
+				});
+			},
+			{ passive: true },
+		);
+		addEventListener("resize", update);
+		update();
+	}
+</script>

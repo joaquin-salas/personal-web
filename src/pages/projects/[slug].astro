@@ -15,10 +15,10 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { project } = Astro.props;
 const { stack, repo, demo } = project.data;
-const { Content } = await render(project);
+const { Content, headings } = await render(project);
 ---
 
-<ProseLayout {...project.data}>
+<ProseLayout {...project.data} headings={headings}>
 	<div slot="meta" class="space-y-3">
 		<TagList tags={stack} label="Technologies" />
 		{(repo || demo) && (

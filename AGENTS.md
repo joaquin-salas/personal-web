@@ -79,7 +79,9 @@ collapses to a single column. The structure is inspired by brittanychiang.com, b
 | Footer                | Colophon (typefaces, tools, "Self-hosted on Oracle Cloud") and ©     | `src/data/profile.ts` (name)      |
 
 Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking
-home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top.
+home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top,
+which shows `TableOfContents` (`##`/`###` headings, at least two) as a rail of lines in the right
+margin on wide screens: the current section is highlighted, and hover/focus opens the titles.
 
 ### Design direction ("Almagra")
 
@@ -110,7 +112,8 @@ is only an undertone. The oversized condensed name on the home page is the one b
   stacks and tags are plain comma-separated text, not chips.
 - Structure carries meaning: the timeline line is only on experience because it is chronological.
 - No decorative motion (no fade-ins, no hover-lift). Feedback is color/underline on links and a
-  visible focus ring.
+  visible focus ring. One exception: an overlay that opens on hover/focus (`TableOfContents`) may
+  fade/slide in with a short (~150ms) opacity/transform transition, `motion-safe:` only.
 - Copy says what a link does ("See all projects"), no `→` suffixes, no `A · B · C` meta strings.
 
 ## Project structure
@@ -135,8 +138,8 @@ src/
 │                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
 ├── components/               Reusable UI with typed Props: ArticleCard, Callout (for .mdx),
 │                             ExperienceItem, ExternalLink, Monogram, ProjectCard, Section,
-│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TagList,
-│                             ThemeToggle.
+│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TableOfContents,
+│                             TagList, ThemeToggle.
 ├── assets/                   Images used by components (optimized by Astro).
 └── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
 public/                       Copied as-is to the site root (favicons, cv.pdf, robots.txt).
