@@ -24,9 +24,9 @@ export const profile: Profile = {
 	tagline:
 		"Computer Engineering graduate from the University of Granada. I build full-stack web applications with React, Node.js and TypeScript.",
 	about: [
-		"I recently graduated in Computer Engineering (Ingeniería Informática) from the University of Granada.",
-		"During a six-month internship at Naranjo I worked across the frontend and backend of AITANNA.AI, inside a monorepo with Docker, branch-based Git workflows and conventional commits.",
-		"I'm currently looking for my first full-time role as a software engineer.",
+		"I recently graduated in Computer Engineering from the University of Granada.",
+		"During a year at Naranjo Intelligent Solutions I worked across the frontend and backend of AITANNA.AI, inside a monorepo with Docker, branch-based Git workflows and conventional commits.",
+		"I'm currently working on side projects like this website and a key value storage implemented with Raft in Go while I'm looking for a full time job.",
 	],
 	email: "joaquin.salas.dev@gmail.com",
 	links: [

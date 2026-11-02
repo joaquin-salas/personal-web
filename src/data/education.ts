@@ -17,6 +17,6 @@ export const education: Education[] = [
 		location: "Granada, Spain",
 		start: "2021",
 		end: "2026",
-		details: "Final-year project: Gateway between EPICS and OPC UA",
+		details: "Final-year project: Gateway Server between EPICS and OPC UA for the IFMIF-DONES",
 	},
 ];

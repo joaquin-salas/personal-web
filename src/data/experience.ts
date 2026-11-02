@@ -16,8 +16,8 @@ export const experience: Experience[] = [
 	{
 		company: "Naranjo Intelligent Solutions",
 		role: "Full-Stack Developer (Intern)",
-		start: "2026-02", // e.g. "2026-01"
-		end: "2026-08",
+		start: "2025-09", // e.g. "2026-01"
+		end: "2026-07",
 		summary: "Worked on AITANNA.AI across the frontend and backend.",
 		highlights: [
 			"Built features for the React frontend and the Node.js/Koa API backed by MongoDB.",
