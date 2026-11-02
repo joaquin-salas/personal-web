@@ -1,0 +1,13 @@
+# Runs the published image on the server. Nginx Proxy Manager handles the domain and HTTPS, and
+# reaches this container by name over the shared network, so no ports are published.
+services:
+  personal-web:
+    image: ghcr.io/joaquin-salas/personal-web:latest
+    container_name: personal-web
+    restart: unless-stopped
+    networks:
+      - red-proxy
+
+networks:
+  red-proxy:
+    external: true

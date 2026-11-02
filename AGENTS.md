@@ -146,7 +146,8 @@ public/                       Copied as-is to the site root (favicons, cv.pdf, r
 design/                       Logo source files and their build script. Not shipped as files:
                               the favicons in `public/` are copied from `design/logo/`, and
                               `Monogram` imports `design/logo/mark.mjs` at build time.
-deploy/                       Server-side files: nginx.conf (the container's web server).
+deploy/                       Server-side files: nginx.conf (the container's web server) and
+                              compose.yaml (runs the published image on the server).
 Dockerfile                    Production image: builds the site, serves `dist/` with nginx on 8080.
 compose.yaml                  Runs that image locally for testing.
 .github/workflows/build.yml   On push to main: `pnpm check`, then build the image (arm64 + amd64)
