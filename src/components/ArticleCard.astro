@@ -1,6 +1,6 @@
 ---
 import { getArticleUrl, type Article } from "@/lib/articles";
-import { formatMonthYear } from "@/lib/dates";
+import { formatMonthDayYear } from "@/lib/dates";
 
 // Row in an article list: publication date in a column (same width as the experience timeline's
 // dates, so they line up on the home page), then title and description.
@@ -15,7 +15,7 @@ const { title, description, pubDate, draft } = article.data;
 
 <article class="grid gap-1 sm:grid-cols-[9rem_1fr] sm:gap-8">
 	<time datetime={pubDate.toISOString()} class="font-display text-sm text-muted sm:pt-1">
-		{formatMonthYear(pubDate)}
+		{formatMonthDayYear(pubDate)}
 	</time>
 	<div>
 		<h3 class="font-display text-lg leading-snug font-semibold">

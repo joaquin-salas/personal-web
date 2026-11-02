@@ -75,7 +75,7 @@ collapses to a single column. The structure is inspired by brittanychiang.com, b
 | Experience            | Timeline: dates, role at company, summary, highlights, stack         | `src/data/experience.ts`          |
 | Education             | Dates, degree, school                                                | `src/data/education.ts`           |
 | Projects              | Featured projects (title, description, stack) + link to `/projects/` | `projects` collection, `featured` |
-| Articles              | Latest 4 articles (month, title, description) + link to `/articles/` | `articles` collection             |
+| Articles              | Latest 4 articles (date, title, description) + link to `/articles/`  | `articles` collection             |
 | Footer                | Colophon (typefaces, tools, "Self-hosted on Oracle Cloud") and ©     | `src/data/profile.ts` (name)      |
 
 Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking

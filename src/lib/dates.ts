@@ -11,6 +11,17 @@ export function formatDate(date: Date): string {
 	}).format(date);
 }
 
+/** e.g. "Oct 30, 2026". */
+export function formatMonthDayYear(date: Date): string {
+	// en-US because en-GB always puts the day first.
+	return new Intl.DateTimeFormat("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		timeZone: "UTC",
+	}).format(date);
+}
+
 /** e.g. `formatPeriod("2025-09", "present")` → "Sept 2025 – Present". */
 export function formatPeriod(start: string, end: string): string {
 	return `${formatYearMonth(start)} – ${end === "present" ? "Present" : formatYearMonth(end)}`;
