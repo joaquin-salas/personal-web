@@ -4,7 +4,6 @@ description: "This website: a statically generated portfolio and blog, self-host
 pubDate: 2026-10-23
 stack: ["Astro", "TypeScript", "Tailwind CSS", "Docker", "GitHub Actions"]
 featured: true
-draft: true
 ---
 
 This project is this website itself!
