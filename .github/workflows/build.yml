@@ -1,7 +1,8 @@
-# On every push to main: check the code, then build the production image and push it to GHCR
-# (ghcr.io/joaquin-salas/personal-web). The server pulls it from there.
+# On every push to main: check the code, build the production image, push it to GHCR
+# (ghcr.io/joaquin-salas/personal-web), then tell the server to pull it and restart the site.
 name: Build
 
+# The event that triggers the jobs
 on:
   push:
     branches: [main]
@@ -61,3 +62,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: image
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      # The key is restricted on the server (authorized_keys `restrict,command=...`) to one command:
+      # pull the new image and recreate the container. So ssh sends no command, and -T asks for no
+      # terminal. SSH_KNOWN_HOSTS pins the server's host keys, so an impostor makes the job fail.
+      - name: Update the server
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          ssh -T -o ConnectTimeout=15 ubuntu@51.170.45.46

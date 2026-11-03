@@ -150,8 +150,9 @@ deploy/                       Server-side files: nginx.conf (the container's web
                               compose.yaml (runs the published image on the server).
 Dockerfile                    Production image: builds the site, serves `dist/` with nginx on 8080.
 compose.yaml                  Runs that image locally for testing.
-.github/workflows/build.yml   On push to main: `pnpm check`, then build the image (arm64 + amd64)
-                              and push it to ghcr.io/joaquin-salas/personal-web.
+.github/workflows/build.yml   On push to main: `pnpm check`, then build the image (arm64 + amd64),
+                              push it to ghcr.io/joaquin-salas/personal-web, and deploy it over SSH
+                              (a key restricted on the server to pulling and restarting the site).
 .claude/agents/               Claude Code subagents: english-reviewer.md (language review of content).
 ```
 
