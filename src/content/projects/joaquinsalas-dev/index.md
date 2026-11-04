@@ -91,7 +91,7 @@ RUN pnpm build
 At this point the website is dockerized, but the future container will hold all the dependencies and I only want the `dist/` folder.
 Besides they are only files on a disk. How are the files going to be sent when a client makes a request? For this, you need an HTTP web server and in this case I'm using **Nginx**.
 
-Therefore, the next stage of the `Dockerfile` is:
+Therefore, in the next stage of the `Dockerfile` the dependencies are discarded and Nginx is set up:
 
 ```dockerfile
 # Pull a non-root nginx image to limit possible security breaches
