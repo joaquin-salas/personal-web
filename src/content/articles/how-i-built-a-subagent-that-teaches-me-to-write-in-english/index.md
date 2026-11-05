@@ -1,9 +1,8 @@
 ---
 title: "How I built a subagent that teaches me to write in English"
 description: "Building a Claude Code subagent that reviews my English writing and reports errors and improvements"
-pubDate: 2026-10-28
+pubDate: 2026-11-05
 tags: ["claude code", "subagent"]
-draft: true
 ---
 
 One of the reasons that encouraged me to build this website was to be able to practise some English. I could have made it in Spanish, but I want to take the C1 Advanced exam from Cambridge, so there isn't a better place to practise than this.
