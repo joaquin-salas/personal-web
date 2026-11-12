@@ -30,7 +30,7 @@ export const profile: Profile = {
 	],
 	email: "joaquin.salas.dev@gmail.com",
 	links: [
-		{ label: "GitHub", href: "https://github.com/JoaquinSalasCastillo" },
+		{ label: "GitHub", href: "https://github.com/joaquin-salas" },
 		{ label: "LinkedIn", href: "https://www.linkedin.com/in/joaquin-salas-castillo" },
 		// { label: "CV", href: "/cv.pdf" }, // put the PDF in public/cv.pdf
 	],
