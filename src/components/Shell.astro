@@ -4,13 +4,14 @@ import Help from "@/components/Help.astro";
 import Listing from "@/components/Listing.astro";
 import Neofetch from "@/components/Neofetch.astro";
 import StatusBar, { type Window } from "@/components/StatusBar.astro";
+import ThemeList from "@/components/ThemeList.astro";
 import Tree from "@/components/Tree.astro";
 import { profile } from "@/data/profile";
 import { allDirs, allDocs, displayPath, type DirNode } from "@/lib/terminal/fs";
 
 // The interactive part of the terminal: suggested commands, the prompt and the status line, fixed
 // at the bottom of the screen, plus the script that runs what is typed. Output that never changes
-// (neofetch, `ls` and `tree` of each folder, the CV documents, `help`) is rendered here at build
+// (neofetch, `ls` and `tree` of each folder, the CV documents, `help`, `theme`) is rendered here at build
 // time into <template>s; the script clones them, so there is a single renderer for everything.
 
 interface Props {
@@ -103,6 +104,9 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 	<template id="out:help">
 		<Help />
 	</template>
+	<template id="out:theme">
+		<ThemeList />
+	</template>
 	{dirs.map(({ dir, parts }) => (
 		<>
 			<template id={`out:ls:${displayPath(parts)}`}>
@@ -122,6 +126,7 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 <script type="application/json" id="terminal-data" set:html={data} />
 <script>
 	import { COMMAND_NAMES, parseLine } from "@/lib/terminal/commands";
+	import { DEFAULT_THEME, THEME_KEY, THEME_NAMES } from "@/lib/themes";
 	import {
 		commonPrefix,
 		completePath,
@@ -383,6 +388,65 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 		return null;
 	}
 
+	// ---------- Themes ----------
+	// BaseLayout's head script applies the saved theme before the first paint; this switches it.
+
+	const screen = document.querySelector<HTMLElement>(".screen");
+	const currentTheme = () => root.getAttribute("data-theme") ?? DEFAULT_THEME;
+
+	/** Shows the current theme wherever it is named (neofetch) and in the browser's toolbar. */
+	function syncTheme() {
+		for (const node of document.querySelectorAll("[data-theme-name]")) {
+			node.textContent = currentTheme();
+		}
+		const background = getComputedStyle(root).getPropertyValue("--color-background").trim();
+		document.querySelector('meta[name="theme-color"]')?.setAttribute("content", background);
+	}
+
+	function setTheme(name: string) {
+		if (name === DEFAULT_THEME) root.removeAttribute("data-theme");
+		else root.setAttribute("data-theme", name);
+		try {
+			localStorage.setItem(THEME_KEY, name);
+		} catch {}
+		syncTheme();
+		if (screen) {
+			screen.classList.remove("degauss");
+			void screen.offsetWidth; // restart the animation
+			screen.classList.add("degauss");
+		}
+	}
+	screen?.addEventListener("animationend", (event) => {
+		if (event.animationName === "degauss") screen.classList.remove("degauss");
+	});
+
+	function theme(name?: string): Node | null {
+		if (!name) {
+			const list = template("theme") as DocumentFragment | null;
+			const row = list?.querySelector(`[data-theme-row="${currentTheme()}"]`);
+			row?.setAttribute("aria-current", "true");
+			row?.querySelector("[data-marker]")?.replaceChildren("●");
+			row?.querySelector("[data-marker]")?.classList.replace("text-muted", "text-accent");
+			row?.querySelector("[data-name]")?.classList.add("font-bold", "text-accent");
+			return list;
+		}
+		if (name === "random") {
+			const others = THEME_NAMES.filter((other) => other !== currentTheme());
+			name = others[Math.floor(Math.random() * others.length)] ?? DEFAULT_THEME;
+		}
+		if (!THEME_NAMES.includes(name)) {
+			return el(
+				"div",
+				"",
+				error(`theme: no theme called ${name}`),
+				line("text-muted", "Run ", commandButton("theme"), " to see them."),
+			);
+		}
+		if (name === currentTheme()) return line("text-muted", `Already using ${name}.`);
+		setTheme(name);
+		return line("", "Theme set to ", el("span", "text-accent", name), ".");
+	}
+
 	// ---------- Power ----------
 	// `shutdown now`, `exit` and the power key (PowerButton.astro) turn the screen off: it stays
 	// dark with only the key lit until the key or any other key is pressed, which boots the home
@@ -484,7 +548,7 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 			case "nano":
 				return line("", "nano: this machine only has cat. It's a very good cat.");
 			case "theme":
-				return line("text-muted", "theme: coming soon.");
+				return theme(args[0]);
 			case "pacman":
 				return pacman(args, output);
 			case "exit":
@@ -518,6 +582,7 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 			if (!entry.isConnected) return; // `clear`
 			if (result) output.append(result);
 		}
+		syncTheme(); // a new neofetch names the theme too
 		timeLines(entry);
 		place(entry);
 	}
@@ -560,7 +625,9 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 		const options =
 			words.length === 1
 				? COMMAND_NAMES.filter((name) => name.startsWith(word))
-				: completePath(fs, cwd, word);
+				: words[0] === "theme"
+					? [...THEME_NAMES, "random"].filter((name) => name.startsWith(word))
+					: completePath(fs, cwd, word);
 		if (!options.length) return;
 		const prefix = commonPrefix(options);
 		if (options.length === 1 || prefix.length > word.length) {
@@ -681,5 +748,6 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 	} else if (finePointer) {
 		input.focus({ preventScroll: true });
 	}
+	syncTheme();
 	moveCursor();
 </script>

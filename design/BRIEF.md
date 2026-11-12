@@ -33,7 +33,8 @@ The whole window is the screen of a 70s terminal: white phosphor text on black, 
 block cursor, a soft glow and faint scanlines. On it runs the modern CLI layer Joaquín actually
 uses: `lsd`-style icons and colours, `cat` with a `bat`-style frame around rendered Markdown,
 `neofetch` for the introduction, and rounded TUI panels with titles set into the border (like
-Claude Code or OpenCode). Mostly black and white; colour is an accent, not a theme. The icons are
+Claude Code or OpenCode). Mostly black and white by default; colour is an accent. Visitors can
+switch to other dark themes with `theme`, as on a riced Arch setup. The icons are
 not decoration: they tell folders from files and articles from projects at a glance.
 
 ### Audience relationship: Peer
@@ -73,11 +74,13 @@ This brief explicitly says no to:
 - A fake terminal in front of a normal site: the terminal _is_ the site, and real URLs still exist
   for every page, rendered at build time.
 - A realistic emulator: photographic textures, screen curvature, reflections, heavy bloom.
-- CRT effects that hurt reading: flicker, strong scanlines, chromatic aberration, green or amber
-  monochrome.
+- CRT effects that hurt reading: flicker, strong scanlines, chromatic aberration. Green and amber
+  monochrome exist only as opt-in themes (`amber`, `greenscreen`), never as the default.
 - Animations that make people wait: the boot plays only when someone arrives at the site, is skippable, and output from
   later commands writes itself in a fraction of a second.
-- Recreating a specific product's look (a particular distro's branding or a named theme as-is).
+- Recreating a specific product's look (a particular distro's branding). Themes borrow the colours of
+  terminal themes Joaquín likes (everforest, gruvbox, Omarchy's All Hallow's Eve and House
+  Special Dark, tokyo-night), mapped onto the site's own tokens.
 - The template dev-portfolio look: navy with neon, gradients, glassmorphism, "Hi, I'm X 👋".
 - Emoji as icons. Icons are Nerd Font glyphs, like `lsd`.
 
@@ -114,7 +117,9 @@ This brief explicitly says no to:
 
   The accent keeps the old Almagra red, so Granada survives as an undertone.
 
-- **Dark only, for now.** A `theme` command with alternative palettes comes later.
+- **Dark only.** `theme` switches between eight dark palettes (almagra, everforest, gruvbox,
+  amber, hallows-eve, house-special, tokyo-night, greenscreen); each redefines the tokens above
+  and passes WCAG AA.
 
 ## Open questions
 

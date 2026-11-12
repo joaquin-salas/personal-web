@@ -1,0 +1,37 @@
+---
+import { THEMES } from "@/lib/themes";
+
+// `theme` output: every theme with its colours. Each swatch group carries `data-theme`, so it shows
+// that theme's tokens whatever theme the page is in. Shell marks the current theme after cloning.
+
+const swatches = ["bg-accent", "bg-green", "bg-yellow", "bg-blue", "bg-magenta", "bg-cyan"];
+---
+
+<div class="space-y-[0.9em]">
+	<ul aria-label="Themes">
+		{THEMES.map(({ name, description }) => (
+			<li class="ln">
+				<button
+					type="button"
+					data-cmd={`theme ${name}`}
+					data-theme-row={name}
+					class="path grid w-full grid-cols-[2ch_15ch_auto_1fr] items-center gap-x-[1ch] max-sm:grid-cols-[2ch_15ch_1fr]"
+				>
+					<span data-marker aria-hidden="true" class="text-muted">
+						○
+					</span>
+					<span data-name>{name}</span>
+					<span data-theme={name} aria-hidden="true" class="flex gap-[3px]">
+						{swatches.map((color) => (
+							<span class:list={["inline-block h-[1em] w-[1.1ch] rounded-[1px]", color]} />
+						))}
+					</span>
+					<span class="text-muted max-sm:col-start-2 max-sm:col-end-4">{description}</span>
+				</button>
+			</li>
+		))}
+	</ul>
+	<p class="ln text-muted">
+		Run theme &lt;name&gt; to switch, or theme random. Your choice is remembered on this browser.
+	</p>
+</div>

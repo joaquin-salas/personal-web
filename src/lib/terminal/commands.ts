@@ -22,22 +22,17 @@ export const COMMANDS: CommandInfo[] = [
 		description: "Open an article or project, or github, linkedin or email",
 	},
 	{ name: "whoami", description: "Who runs this machine" },
+	{
+		name: "theme",
+		usage: "[name]",
+		description: "List the colour themes, or switch (theme random)",
+	},
 	{ name: "clear", description: "Clear the screen (Ctrl+L)" },
 	{ name: "history", description: "Commands typed this session" },
 	{ name: "echo", usage: "<text>", description: "Print the text" },
 ];
 
-export const EASTER_EGGS = [
-	"sudo",
-	"rm",
-	"vim",
-	"nano",
-	"theme",
-	"pacman",
-	"exit",
-	"reboot",
-	"shutdown",
-];
+export const EASTER_EGGS = ["sudo", "rm", "vim", "nano", "pacman", "exit", "reboot", "shutdown"];
 
 export const COMMAND_NAMES = [...COMMANDS.map((command) => command.name), ...EASTER_EGGS];
 

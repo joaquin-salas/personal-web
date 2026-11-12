@@ -6,6 +6,7 @@ import { education } from "@/data/education";
 import { experience } from "@/data/experience";
 import { profile } from "@/data/profile";
 import type { IconName } from "@/lib/icons";
+import { DEFAULT_THEME } from "@/lib/themes";
 
 // `neofetch` output: the JS monogram as block art beside the CV summary in TUI panels. Each line
 // carries its boot timing (--n characters, --d duration, --t delay), so on the first visit the
@@ -50,6 +51,8 @@ interface Fact {
 	/** Clicking the value runs this command; `href` is the page it opens without JavaScript. */
 	command?: string;
 	href?: string;
+	/** The current theme: Shell keeps the value up to date. */
+	theme?: boolean;
 }
 
 const job = experience[0];
@@ -94,6 +97,7 @@ const panels: { title: string; facts: Fact[] }[] = [
 			},
 			{ key: "Host", value: "Oracle Cloud, self-hosted", icon: "terminal" },
 			{ key: "Built with", value: "Astro, Tailwind CSS, Hack Nerd Font", icon: "link" },
+			{ key: "Theme", value: DEFAULT_THEME, icon: "theme", command: "theme", theme: true },
 		],
 	},
 ];
@@ -154,7 +158,16 @@ const swatchLine = timing("x".repeat(24), line++, "info");
 								{fact.key}
 							</dt>
 							<dd class="min-w-0 break-words">
-								{fact.command ? (
+								{fact.theme ? (
+									<button
+										type="button"
+										data-cmd={fact.command}
+										data-theme-name
+										class="text-cyan underline underline-offset-4"
+									>
+										{fact.value}
+									</button>
+								) : fact.command ? (
 									<a
 										href={fact.href}
 										data-cmd={fact.command}

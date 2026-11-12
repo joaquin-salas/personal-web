@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import { DEFAULT_THEME, THEME_KEY, THEME_NAMES } from "@/lib/themes";
 
 // HTML shell only. Layouts and pages decide their own <main> and landmarks.
 
@@ -9,6 +10,10 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+// Applies the visitor's saved theme (`theme <name>`) before the first paint, so the page never
+// flashes in the default theme first. Without JavaScript or storage, the default theme stays.
+const themeScript = `try{var t=localStorage.getItem(${JSON.stringify(THEME_KEY)});if(t&&t!==${JSON.stringify(DEFAULT_THEME)}&&${JSON.stringify(THEME_NAMES)}.indexOf(t)>-1)document.documentElement.setAttribute("data-theme",t)}catch(e){}`;
 ---
 
 <html lang="en">
@@ -17,7 +22,8 @@ const { title, description } = Astro.props;
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#0e0d0c" />
+		<meta name="theme-color" content="#0b0b0a" />
+		<script is:inline set:html={themeScript} />
 		<!-- Browsers cache favicons hard; bump ?v= whenever the icons change. -->
 		<link rel="icon" href="/favicon.ico?v=3" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />

@@ -27,7 +27,8 @@
 /*
  * Design tokens: the only place colors, fonts and widths are defined (see design/BRIEF.md). The
  * whole window is a 70s terminal screen: white phosphor on black, one warm accent, and ANSI colors
- * with one role each. Every text color passes WCAG AA on the background.
+ * with one role each. Every text color passes WCAG AA on the background. These are the almagra
+ * theme; the other themes redefine the same tokens (see Themes below).
  */
 @theme {
 	--color-background: #0b0b0a; /* Screen */
@@ -55,6 +56,11 @@
 @layer base {
 	:root {
 		color-scheme: dark;
+
+		/* Glass strength (themes tune it) and the color of the tube's light in the power animations. */
+		--glow: 32%;
+		--scan: 0.18;
+		--beam: color-mix(in srgb, var(--color-ink) 35%, #fff);
 
 		/* Boot sequence timing (see the boot rules below and Shell.astro). */
 		--boot-output: 1750ms;
@@ -108,11 +114,142 @@
 }
 
 /*
+ * Themes (`theme <name>`, listed in src/lib/themes.ts). Each one redefines every token, plus the
+ * strength of the glow and the scanlines. The theme is set as `data-theme` on <html>; a swatch in
+ * the `theme` list sets it on itself to show another theme's colors. almagra repeats the defaults
+ * above so its swatch works inside other themes. Every text color passes WCAG AA.
+ */
+@layer base {
+	[data-theme="almagra"] {
+		--color-background: #0b0b0a;
+		--color-ink: #ebe9e4;
+		--color-muted: #8e8b85;
+		--color-rule: #3a3835;
+		--color-code: #161514;
+		--color-accent: #e0826a;
+		--color-green: #9fbf6a;
+		--color-yellow: #d9b25c;
+		--color-blue: #7fa6d4;
+		--color-magenta: #c495c8;
+		--color-cyan: #79bfb5;
+		--glow: 32%;
+		--scan: 0.18;
+	}
+	[data-theme="everforest"] {
+		--color-background: #2d353b;
+		--color-ink: #d3c6aa;
+		--color-muted: #9da9a0;
+		--color-rule: #4f5b58;
+		--color-code: #232a2e;
+		--color-accent: #a7c080;
+		--color-green: #83c092;
+		--color-yellow: #dbbc7f;
+		--color-blue: #7fbbb3;
+		--color-magenta: #d699b6;
+		--color-cyan: #83c092;
+		--glow: 14%;
+		--scan: 0.08;
+	}
+	[data-theme="gruvbox"] {
+		--color-background: #282828;
+		--color-ink: #ebdbb2;
+		--color-muted: #a89984;
+		--color-rule: #504945;
+		--color-code: #1d2021;
+		--color-accent: #fe8019;
+		--color-green: #b8bb26;
+		--color-yellow: #fabd2f;
+		--color-blue: #83a598;
+		--color-magenta: #d3869b;
+		--color-cyan: #8ec07c;
+		--glow: 20%;
+		--scan: 0.12;
+	}
+	/* Monochrome: every role is a shade of amber; the accent is the brightest. */
+	[data-theme="amber"] {
+		--color-background: #110b04;
+		--color-ink: #ffb33a;
+		--color-muted: #b67e2e;
+		--color-rule: #4d3714;
+		--color-code: #1b1208;
+		--color-accent: #ffd68f;
+		--color-green: #ffc457;
+		--color-yellow: #ffd68f;
+		--color-blue: #f0a63a;
+		--color-magenta: #e09a3c;
+		--color-cyan: #ffcb6e;
+		--glow: 55%;
+		--scan: 0.26;
+	}
+	[data-theme="hallows-eve"] {
+		--color-background: #000000;
+		--color-ink: #f4f4f4;
+		--color-muted: #8f8f8f;
+		--color-rule: #3a3a3a;
+		--color-code: #101010;
+		--color-accent: #e08a3c;
+		--color-green: #66cc33;
+		--color-yellow: #ffd93d;
+		--color-blue: #3d93d6;
+		--color-magenta: #b36ee0;
+		--color-cyan: #cccc33;
+		--glow: 28%;
+		--scan: 0.18;
+	}
+	[data-theme="house-special"] {
+		--color-background: #010101;
+		--color-ink: #bac2de;
+		--color-muted: #8186a0;
+		--color-rule: #45475a;
+		--color-code: #11111b;
+		--color-accent: #cba6f7;
+		--color-green: #8fc38a;
+		--color-yellow: #d6c296;
+		--color-blue: #769bd7;
+		--color-magenta: #d3a7c7;
+		--color-cyan: #7fc2b7;
+		--glow: 18%;
+		--scan: 0.1;
+	}
+	[data-theme="tokyo-night"] {
+		--color-background: #1a1b26;
+		--color-ink: #c0caf5;
+		--color-muted: #8a93bd;
+		--color-rule: #3b4261;
+		--color-code: #16161e;
+		--color-accent: #7aa2f7;
+		--color-green: #9ece6a;
+		--color-yellow: #e0af68;
+		--color-blue: #7dcfff;
+		--color-magenta: #bb9af7;
+		--color-cyan: #73daca;
+		--glow: 22%;
+		--scan: 0.1;
+	}
+	/* Monochrome, like amber, in green. */
+	[data-theme="greenscreen"] {
+		--color-background: #040c06;
+		--color-ink: #4dff7a;
+		--color-muted: #2fa152;
+		--color-rule: #174a26;
+		--color-code: #07160b;
+		--color-accent: #b6ffc9;
+		--color-green: #7dff9d;
+		--color-yellow: #b6ffc9;
+		--color-blue: #3ee06b;
+		--color-magenta: #2fd660;
+		--color-cyan: #9affb4;
+		--glow: 55%;
+		--scan: 0.26;
+	}
+}
+
+/*
  * The glass of a 70s terminal, kept faint so text stays crisp: a phosphor glow on text (`crt`),
  * and scanlines with a vignette over the whole window (`glass`). No flicker, no curvature.
  */
 @utility crt {
-	text-shadow: 0 0 0.45em color-mix(in srgb, currentColor 32%, transparent);
+	text-shadow: 0 0 0.45em color-mix(in srgb, currentColor var(--glow), transparent);
 }
 @utility glass {
 	position: fixed;
@@ -120,7 +257,7 @@
 	z-index: 40;
 	pointer-events: none;
 	background:
-		repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / 0.18) 2px 3px),
+		repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / var(--scan)) 2px 3px),
 		radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.55) 100%);
 }
 
@@ -190,6 +327,15 @@
 	}
 	100% {
 		width: 8ch;
+	}
+}
+/* Switching theme: the screen flashes, dips and settles, like a CRT's degauss button. */
+@keyframes degauss {
+	18% {
+		filter: brightness(1.9) saturate(0.2) blur(0.6px);
+	}
+	55% {
+		filter: brightness(0.7) hue-rotate(25deg);
 	}
 }
 @keyframes hide-at {
@@ -365,6 +511,9 @@
 	.cursor-blink {
 		animation: blink 1.1s steps(1) infinite;
 	}
+	.screen.degauss {
+		animation: degauss 420ms ease-out;
+	}
 
 	/* The light of the tube: a full-screen layer, squashed into a dot or a line by the animations.
 	   Its gradient keeps a bright core when it is squashed thin. */
@@ -378,9 +527,9 @@
 		background: linear-gradient(
 			to bottom,
 			transparent,
-			color-mix(in srgb, #fffdf8 80%, transparent) 6%,
-			#fffdf8 50%,
-			color-mix(in srgb, #fffdf8 80%, transparent) 94%,
+			color-mix(in srgb, var(--beam) 80%, transparent) 6%,
+			var(--beam) 50%,
+			color-mix(in srgb, var(--beam) 80%, transparent) 94%,
 			transparent
 		);
 	}

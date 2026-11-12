@@ -24,6 +24,7 @@ export const icons = {
 	link: "\u{f0c1}",
 	external: "\u{f08e}",
 	power: "\u{f011}",
+	theme: "\u{f1fc}",
 } as const;
 
 export type IconName = keyof typeof icons;
