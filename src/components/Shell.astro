@@ -1,0 +1,683 @@
+---
+import CvDocument from "@/components/CvDocument.astro";
+import Help from "@/components/Help.astro";
+import Listing from "@/components/Listing.astro";
+import Neofetch from "@/components/Neofetch.astro";
+import StatusBar, { type Window } from "@/components/StatusBar.astro";
+import Tree from "@/components/Tree.astro";
+import { profile } from "@/data/profile";
+import { allDirs, allDocs, displayPath, type DirNode } from "@/lib/terminal/fs";
+
+// The interactive part of the terminal: suggested commands, the prompt and the status line, fixed
+// at the bottom of the screen, plus the script that runs what is typed. Output that never changes
+// (neofetch, `ls` and `tree` of each folder, the CV documents, `help`) is rendered here at build
+// time into <template>s; the script clones them, so there is a single renderer for everything.
+
+interface Props {
+	fs: DirNode;
+	/** Folder the prompt starts in, e.g. ["articles"]. */
+	cwd: string[];
+	current: Window;
+}
+
+const { fs, cwd, current } = Astro.props;
+
+const dirs = allDirs(fs);
+const docs = allDocs(fs);
+const projectCount = dirs.find(({ parts }) => parts.join("/") === "projects")?.dir.children.length;
+const articleCount = dirs.find(({ parts }) => parts.join("/") === "articles")?.dir.children.length;
+const suggestions = ["help", "ls", "tree", "cat ~/about.md", "open github"];
+const contact = {
+	github: profile.links.find((link) => link.label === "GitHub")?.href ?? "",
+	linkedin: profile.links.find((link) => link.label === "LinkedIn")?.href ?? "",
+	email: profile.email,
+	whoami: `${profile.name}, ${profile.role} in ${profile.location}`,
+};
+// Escaped so a description can never close the <script> element.
+const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
+---
+
+<div class="dock shrink-0 pr-[max(1rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))]">
+	<div class="mx-auto max-w-terminal">
+		<nav
+			aria-label="Suggested commands"
+			class="flex flex-wrap gap-x-[2.5ch] px-[1ch] pb-[0.4em] text-sm text-muted"
+		>
+			<span aria-hidden="true">try</span>
+			{suggestions.map((command) => (
+				<button type="button" data-cmd={command} class="path hover:text-ink">
+					{command}
+				</button>
+			))}
+		</nav>
+
+		<form
+			id="prompt"
+			data-cwd={JSON.stringify(cwd)}
+			autocomplete="off"
+			class="flex items-baseline gap-x-[1ch] rounded-lg border border-rule px-[1.5ch] py-[0.3em] focus-within:border-accent/60"
+		>
+			<span aria-hidden="true" class="whitespace-nowrap">
+				<span class="font-bold text-green">joaquin@salas</span>:
+				<span id="prompt-cwd" class="font-bold text-blue">
+					{displayPath(cwd)}
+				</span>
+				<span class="text-accent">$</span>
+			</span>
+			<div class="relative min-w-0 flex-1">
+				<label for="prompt-input" class="sr-only">
+					Terminal command
+				</label>
+				<input
+					id="prompt-input"
+					name="command"
+					spellcheck="false"
+					autocapitalize="off"
+					autocorrect="off"
+					enterkeyhint="go"
+					class="peer w-full bg-transparent p-0 text-[16px] text-ink caret-transparent outline-none sm:text-base"
+				/>
+				<span
+					id="prompt-cursor"
+					aria-hidden="true"
+					class="cursor-blink pointer-events-none absolute top-[0.15em] left-[calc(var(--x,0)*1px)] h-[1.25em] w-[1ch] bg-ink mix-blend-difference peer-[:not(:focus)]:bg-transparent peer-[:not(:focus)]:mix-blend-normal peer-[:not(:focus)]:outline peer-[:not(:focus)]:outline-1 peer-[:not(:focus)]:-outline-offset-1 peer-[:not(:focus)]:outline-ink"
+				></span>
+				<span
+					id="prompt-probe"
+					aria-hidden="true"
+					class="invisible absolute top-0 left-0 text-[16px] whitespace-pre sm:text-base"
+				>
+					0
+				</span>
+			</div>
+		</form>
+
+		<StatusBar current={current} />
+	</div>
+</div>
+
+<div hidden>
+	<template id="out:neofetch">
+		<Neofetch projectCount={projectCount ?? 0} articleCount={articleCount ?? 0} />
+	</template>
+	<template id="out:help">
+		<Help />
+	</template>
+	{dirs.map(({ dir, parts }) => (
+		<>
+			<template id={`out:ls:${displayPath(parts)}`}>
+				<Listing dir={dir} path={displayPath(parts)} />
+			</template>
+			<template id={`out:tree:${displayPath(parts)}`}>
+				<Tree dir={dir} path={displayPath(parts)} />
+			</template>
+		</>
+	))}
+	{docs.map(({ file, parts }) => (
+		<template id={`out:cat:${displayPath(parts)}`}>
+			<CvDocument file={file.name as "about.md" | "experience.md" | "education.md"} />
+		</template>
+	))}
+</div>
+<script type="application/json" id="terminal-data" set:html={data} />
+<script>
+	import { COMMAND_NAMES, parseLine } from "@/lib/terminal/commands";
+	import {
+		commonPrefix,
+		completePath,
+		displayPath,
+		HOME,
+		resolve,
+		type DirNode,
+		type Resolved,
+	} from "@/lib/terminal/fs";
+
+	interface Data {
+		fs: DirNode;
+		contact: { github: string; linkedin: string; email: string; whoami: string };
+	}
+
+	const byId = <T extends HTMLElement = HTMLElement>(id: string) =>
+		document.getElementById(id) as T;
+	const root = document.documentElement;
+	const { fs, contact } = JSON.parse(byId("terminal-data").textContent ?? "{}") as Data;
+	const out = byId("terminal-output");
+	const log = byId("terminal-log");
+	const form = byId<HTMLFormElement>("prompt");
+	const input = byId<HTMLInputElement>("prompt-input");
+	const cursor = byId("prompt-cursor");
+	const probe = byId("prompt-probe");
+	const promptCwd = byId("prompt-cwd");
+	const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+	// Focusing the prompt on its own opens the keyboard on phones, so only do it with a mouse.
+	const finePointer = matchMedia("(pointer: fine)").matches;
+
+	// Session state: storage can be unavailable (private windows), so every access may fail.
+	const store = {
+		get<T>(key: string, fallback: T): T {
+			try {
+				const value = sessionStorage.getItem(key);
+				return value === null ? fallback : (JSON.parse(value) as T);
+			} catch {
+				return fallback;
+			}
+		},
+		set(key: string, value: unknown) {
+			try {
+				sessionStorage.setItem(key, JSON.stringify(value));
+			} catch {}
+		},
+	};
+
+	let cwd = JSON.parse(form.dataset.cwd ?? "[]") as string[];
+	let previousCwd = cwd;
+	let history = store.get<string[]>("history", []);
+	let historyIndex = history.length;
+	let busy = false;
+	let cancel: (() => void) | null = null;
+
+	// ---------- Output helpers ----------
+
+	type Child = Node | string | null | undefined | false;
+
+	function el(tag: string, className = "", ...children: Child[]): HTMLElement {
+		const node = document.createElement(tag);
+		if (className) node.className = className;
+		for (const child of children) if (child) node.append(child);
+		return node;
+	}
+	const line = (className: string, ...children: Child[]) => el("p", `ln ${className}`, ...children);
+	const muted = (text: string) => el("span", "text-muted", text);
+	function commandButton(command: string, label = command): HTMLElement {
+		const button = el("button", "path text-accent", label);
+		button.setAttribute("type", "button");
+		button.dataset.cmd = command;
+		return button;
+	}
+	function link(href: string, text: string): HTMLElement {
+		const anchor = el("a", "text-cyan underline underline-offset-4", text) as HTMLAnchorElement;
+		anchor.href = href;
+		anchor.target = "_blank";
+		anchor.rel = "noopener noreferrer";
+		return anchor;
+	}
+	const error = (...children: Child[]) => line("text-accent", ...children);
+
+	/** A copy of output rendered at build time (see the templates in Shell.astro). */
+	function template(id: string): Node | null {
+		const found = document.getElementById(`out:${id}`) as HTMLTemplateElement | null;
+		return found ? found.content.cloneNode(true) : null;
+	}
+
+	function promptLine(command: Child): HTMLElement {
+		const where = el(
+			"span",
+			"whitespace-nowrap",
+			el("span", "font-bold text-green", "joaquin@salas"),
+			":",
+			el("span", "font-bold text-blue", displayPath(cwd)),
+			el("span", "text-accent", "$"),
+		);
+		const prompt = el("p", "flex flex-wrap gap-x-[1ch]", where, el("span", "break-all", command));
+		prompt.setAttribute("aria-hidden", "true");
+		return prompt;
+	}
+
+	function newEntry(command: Child): { entry: HTMLElement; output: HTMLElement } {
+		const output = el("div", "mt-2");
+		const entry = el("section", "fresh mb-[1.4em]", promptLine(command), output);
+		log.append(entry);
+		return { entry, output };
+	}
+
+	/** Gives each new line its reveal: one step per character, a short stagger between lines. */
+	function timeLines(entry: HTMLElement) {
+		entry.querySelectorAll<HTMLElement>(".ln").forEach((node, i) => {
+			const n = Math.max(1, Math.min(node.textContent?.length ?? 1, 120));
+			node.style.setProperty("--n", String(n));
+			node.style.setProperty("--d", `${Math.min(n * 4, 140)}ms`);
+			node.style.setProperty("--t", `${Math.min(i, 60) * 18}ms`);
+		});
+	}
+
+	/** Short output scrolls to the bottom; output taller than the screen starts at its prompt. */
+	function place(entry: HTMLElement) {
+		requestAnimationFrame(() => {
+			if (entry.offsetHeight > out.clientHeight) entry.scrollIntoView({ block: "start" });
+			else out.scrollTop = out.scrollHeight;
+		});
+	}
+
+	// ---------- Commands ----------
+
+	/** A "not found" error; if the path exists from `~`, suggests that path. */
+	function notFound(message: string, name: string, target = ""): Node {
+		const fromHome = !target.startsWith("~") && !target.startsWith("/") && resolve(fs, [], target);
+		if (!fromHome) return error(message);
+		return el(
+			"div",
+			"",
+			error(message),
+			line("text-muted", "Try ", commandButton(`${name} ~/${target}`)),
+		);
+	}
+
+	function setCwd(parts: string[]) {
+		previousCwd = cwd;
+		cwd = [...parts];
+		promptCwd.textContent = displayPath(cwd);
+	}
+
+	function cd(target?: string): Node | null {
+		if (!target || target === "~") return (setCwd([]), null);
+		if (target === "-") return (setCwd(previousCwd), null);
+		const found = resolve(fs, cwd, target);
+		if (!found) return notFound(`cd: no such file or directory: ${target}`, "cd", target);
+		if (found.node.kind !== "dir") return error(`cd: not a directory: ${target}`);
+		setCwd(found.parts);
+		return null;
+	}
+
+	function ls(args: string[], name: "ls" | "tree"): Node | null {
+		const target = args.find((arg) => !arg.startsWith("-"));
+		const found = resolve(fs, cwd, target);
+		if (!found) {
+			return notFound(
+				`${name}: cannot access '${target}': No such file or directory`,
+				name,
+				target,
+			);
+		}
+		if (found.node.kind !== "dir") {
+			return name === "ls" ? line("", found.node.name) : error(`${name}: '${target}' is a file`);
+		}
+		return template(`${name}:${displayPath(found.parts)}`);
+	}
+
+	function openPage(found: Resolved): Node {
+		const { node } = found;
+		if (node.kind === "file" && node.href) {
+			const href = node.href;
+			setTimeout(() => location.assign(href), 350);
+		}
+		return line("text-muted", `Opening ${node.name}…`);
+	}
+
+	function cat(target?: string): Node | null {
+		if (!target) return error("cat: missing file. Try ", commandButton("cat about.md"));
+		const found = resolve(fs, cwd, target);
+		if (!found) return notFound(`cat: ${target}: No such file or directory`, "cat", target);
+		if (found.node.kind === "dir") {
+			return error(`cat: ${target}: Is a directory. Try `, commandButton(`ls ${target}`));
+		}
+		if (found.node.type === "doc") return template(`cat:${displayPath(found.parts)}`);
+		return openPage(found);
+	}
+
+	function open(target?: string): Node | null {
+		if (!target) return error("open: what should I open? Try ", commandButton("open github"));
+		if (target === "github" || target === "linkedin") {
+			const href = contact[target];
+			window.open(href, "_blank", "noopener");
+			const text = href.replace(/^https?:\/\/(www\.)?/, "");
+			return line("", "Opening ", link(href, text), muted("  (if no tab opened, click the link)"));
+		}
+		if (target === "email") {
+			location.href = `mailto:${contact.email}`;
+			return line("", "Writing to ", link(`mailto:${contact.email}`, contact.email));
+		}
+		const found = resolve(fs, cwd, target);
+		if (!found) return notFound(`open: ${target}: No such file or directory`, "open", target);
+		if (found.node.kind === "dir") {
+			return error(`open: ${target} is a folder. Try `, commandButton(`cd ${target}`));
+		}
+		return found.node.type === "doc" ? cat(target) : openPage(found);
+	}
+
+	function pacman(args: string[], output: HTMLElement): Node | null {
+		if (!args.some((arg) => /^-S\w*u/.test(arg))) {
+			return error("error: no operation specified (try pacman -Syu)");
+		}
+		const say = (...children: Child[]) => {
+			const node = el("p", "", ...children);
+			output.append(node);
+			out.scrollTop = out.scrollHeight;
+			return node;
+		};
+		const wait = (ms: number) =>
+			new Promise<void>((done, fail) => {
+				const timer = setTimeout(done, ms);
+				cancel = () => {
+					clearTimeout(timer);
+					fail(new Error("cancelled"));
+				};
+			});
+		busy = true;
+		void (async () => {
+			try {
+				say(
+					el("span", "text-accent", ":: "),
+					el("span", "font-bold", "Synchronizing package databases..."),
+				);
+				for (const repo of ["core", "extra", "multilib"]) {
+					const bar = muted(`[${"-".repeat(20)}]   0%`);
+					say(` ${repo.padEnd(10)}`, bar);
+					for (let step = 1; step <= 20; step++) {
+						await wait(22);
+						bar.textContent = `[${"#".repeat(step)}${"-".repeat(20 - step)}] ${String(step * 5).padStart(3)}%`;
+					}
+				}
+				await wait(250);
+				say(
+					el("span", "text-accent", ":: "),
+					el("span", "font-bold", "Starting full system upgrade..."),
+				);
+				await wait(500);
+				say(" there is nothing to do");
+			} catch {
+				say("^C");
+			}
+			cancel = null;
+			busy = false;
+		})();
+		return null;
+	}
+
+	// ---------- Power ----------
+	// `shutdown now`, `exit` and the power key (PowerButton.astro) turn the screen off: it stays
+	// dark with only the key lit until the key or any other key is pressed, which boots the home
+	// page. `reboot` turns it off and boots straight away.
+
+	const powerButton = byId<HTMLButtonElement>("power-button");
+	let poweredOff = false;
+
+	/** Plays the power-off animation; `then` runs once the screen is dark. */
+	function turnOff(then: () => void) {
+		busy = true;
+		input.blur();
+		document.body.classList.add("powering-off");
+		setTimeout(then, reducedMotion ? 0 : 1200);
+	}
+
+	function powerOff(): null {
+		if (poweredOff) return null;
+		poweredOff = true;
+		powerButton.setAttribute("aria-label", "Turn the terminal on");
+		turnOff(() => document.body.classList.add("powered-off"));
+		return null;
+	}
+
+	function reboot(): null {
+		if (poweredOff) return null;
+		poweredOff = true;
+		// A beat of black between off and on, like a real restart.
+		turnOff(() => setTimeout(powerOn, reducedMotion ? 0 : 300));
+		return null;
+	}
+
+	function powerOn() {
+		try {
+			sessionStorage.setItem("reboot", "1");
+		} catch {}
+		location.assign("/");
+	}
+
+	powerButton.addEventListener("click", () => {
+		if (poweredOff) powerOn();
+		else if (busy || root.hasAttribute("data-boot")) powerOff();
+		else typeAndRun("shutdown now");
+	});
+
+	addEventListener("keydown", (event) => {
+		if (!poweredOff || event.target === powerButton) return; // the key's own click handles it
+		event.preventDefault();
+		powerOn();
+	});
+
+	function run(name: string, args: string[], output: HTMLElement): Node | null {
+		switch (name) {
+			case "help":
+				return template("help");
+			case "neofetch":
+				return template("neofetch");
+			case "ls":
+			case "tree":
+				return ls(args, name);
+			case "cd":
+				return cd(args[0]);
+			case "pwd":
+				return line("", `${HOME}${cwd.length ? `/${cwd.join("/")}` : ""}`);
+			case "cat":
+				return cat(args[0]);
+			case "open":
+				return open(args[0]);
+			case "whoami":
+				return line("", contact.whoami);
+			case "clear":
+				log.replaceChildren();
+				return null;
+			case "history":
+				return el(
+					"div",
+					"",
+					...history.map((command, i) =>
+						line("", muted(`${String(i + 1).padStart(4)}  `), command),
+					),
+				);
+			case "echo":
+				return line("", args.join(" "));
+			case "sudo":
+				return line("", "joaquin is not in the sudoers file. This incident will be reported.");
+			case "rm":
+				return error(
+					args.includes("/") || args.includes("/*")
+						? "Nice try."
+						: "rm: cannot remove: read-only file system",
+				);
+			case "vim":
+				return line(
+					"",
+					"You opened vim. Nobody has ever left. Try ",
+					commandButton("cat about.md"),
+					" instead.",
+				);
+			case "nano":
+				return line("", "nano: this machine only has cat. It's a very good cat.");
+			case "theme":
+				return line("text-muted", "theme: coming soon.");
+			case "pacman":
+				return pacman(args, output);
+			case "exit":
+				return powerOff();
+			case "shutdown":
+				return args[0] === "now"
+					? powerOff()
+					: error("shutdown: say when. Try ", commandButton("shutdown now"));
+			case "reboot":
+				return reboot();
+			default:
+				return el(
+					"div",
+					"",
+					error(`zsh: command not found: ${name}`),
+					line("text-muted", "Type ", commandButton("help"), " to see the commands."),
+				);
+		}
+	}
+
+	function execute(commandLine: string) {
+		const { entry, output } = newEntry(commandLine);
+		if (commandLine.trim()) {
+			history = [...history, commandLine].slice(-100);
+			store.set("history", history);
+		}
+		historyIndex = history.length;
+		for (const [name, ...args] of parseLine(commandLine)) {
+			if (!name) continue;
+			const result = run(name, args, output);
+			if (!entry.isConnected) return; // `clear`
+			if (result) output.append(result);
+		}
+		timeLines(entry);
+		place(entry);
+	}
+
+	function submit() {
+		const value = input.value;
+		input.value = "";
+		moveCursor();
+		execute(value);
+	}
+
+	form.addEventListener("submit", (event) => {
+		event.preventDefault();
+		if (!busy) submit();
+	});
+
+	/** Clicked commands type themselves into the prompt first, so visitors learn them. */
+	function typeAndRun(command: string) {
+		if (busy || root.hasAttribute("data-boot")) return;
+		busy = true;
+		let typed = 0;
+		const step = () => {
+			input.value = command.slice(0, ++typed);
+			moveCursor();
+			if (typed < command.length) setTimeout(step, 14);
+			else
+				setTimeout(() => {
+					busy = false;
+					submit();
+				}, 90);
+		};
+		step();
+	}
+
+	// ---------- Keys: history, completion, Ctrl+C, Ctrl+L ----------
+
+	function complete() {
+		const words = input.value.split(" ");
+		const word = words.at(-1) ?? "";
+		const options =
+			words.length === 1
+				? COMMAND_NAMES.filter((name) => name.startsWith(word))
+				: completePath(fs, cwd, word);
+		if (!options.length) return;
+		const prefix = commonPrefix(options);
+		if (options.length === 1 || prefix.length > word.length) {
+			const only = options.length === 1 ? options[0] : undefined;
+			words[words.length - 1] = only ? only + (only.endsWith("/") ? "" : " ") : prefix;
+			input.value = words.join(" ");
+		} else {
+			const names = options.map((option) => {
+				const parts = option.split("/").filter(Boolean);
+				return (parts.at(-1) ?? option) + (option.endsWith("/") ? "/" : "");
+			});
+			const { entry, output } = newEntry(input.value);
+			entry.classList.remove("fresh");
+			output.append(line("", names.join("   ")));
+			out.scrollTop = out.scrollHeight;
+		}
+		moveCursor();
+	}
+
+	input.addEventListener("keydown", (event) => {
+		const key = event.key.toLowerCase();
+		if (event.ctrlKey && key === "c") {
+			if (cancel) return cancel();
+			if (input.selectionStart !== input.selectionEnd) return; // copying
+			event.preventDefault();
+			const { entry } = newEntry(el("span", "", input.value, muted("^C")));
+			entry.classList.remove("fresh");
+			input.value = "";
+			moveCursor();
+			out.scrollTop = out.scrollHeight;
+			return;
+		}
+		if (busy) {
+			if (event.key === "Tab" || event.key === "Enter") event.preventDefault();
+			return;
+		}
+		if (event.ctrlKey && key === "l") {
+			event.preventDefault();
+			log.replaceChildren();
+		} else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+			event.preventDefault();
+			historyIndex = Math.max(
+				0,
+				Math.min(history.length, historyIndex + (event.key === "ArrowUp" ? -1 : 1)),
+			);
+			input.value = history[historyIndex] ?? "";
+			input.setSelectionRange(input.value.length, input.value.length);
+			moveCursor();
+		} else if (event.key === "Tab") {
+			event.preventDefault();
+			complete();
+		}
+	});
+
+	// ---------- The block cursor ----------
+	// The native caret is hidden and a block drawn at the caret position: in a monospace font
+	// every character is the same width, so the position is caret index × character width.
+
+	function moveCursor() {
+		const width = probe.getBoundingClientRect().width || 9.6;
+		const position = input.selectionStart ?? input.value.length;
+		cursor.style.setProperty("--x", String(position * width - input.scrollLeft));
+		// Restart the blink, so the cursor stays solid while typing.
+		cursor.classList.remove("cursor-blink");
+		void cursor.offsetWidth;
+		cursor.classList.add("cursor-blink");
+	}
+	for (const type of ["input", "keyup", "click", "select", "focus", "blur"]) {
+		input.addEventListener(type, () => requestAnimationFrame(moveCursor));
+	}
+
+	// ---------- Clicks ----------
+
+	document.addEventListener("click", (event) => {
+		const target = event.target as HTMLElement;
+		const plain = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey;
+		const command = target.closest<HTMLElement>("[data-cmd]");
+		if (command && plain) {
+			event.preventDefault();
+			typeAndRun(command.dataset.cmd ?? "");
+			return;
+		}
+		const fill = target.closest<HTMLElement>("[data-fill]");
+		if (fill) {
+			input.value = fill.dataset.fill ?? "";
+			input.focus();
+			moveCursor();
+			return;
+		}
+		// A click on the screen focuses the prompt, unless it selects text or hits a control.
+		if (!poweredOff && !target.closest("a, button, input") && !String(getSelection())) {
+			input.focus({ preventScroll: true });
+		}
+	});
+
+	// ---------- Boot ----------
+	// TerminalLayout's head script sets `data-boot` when a visitor arrives at the site; CSS does the
+	// animation. Any key or click skips to the end; the attribute goes when it is over.
+
+	if (root.hasAttribute("data-boot")) {
+		const end = parseInt(getComputedStyle(root).getPropertyValue("--boot-end"), 10) || 2750;
+		const finish = () => {
+			clearTimeout(timer);
+			root.removeAttribute("data-boot");
+			removeEventListener("keydown", skip, true);
+			removeEventListener("pointerdown", skip, true);
+			if (finePointer) input.focus({ preventScroll: true });
+		};
+		const skip = (event: Event) => {
+			if (event.type === "keydown") event.preventDefault();
+			finish();
+		};
+		const timer = setTimeout(finish, end + 200);
+		addEventListener("keydown", skip, true);
+		addEventListener("pointerdown", skip, true);
+	} else if (finePointer) {
+		input.focus({ preventScroll: true });
+	}
+	moveCursor();
+</script>

@@ -1,0 +1,205 @@
+---
+import ExternalLink from "@/components/ExternalLink.astro";
+import Icon from "@/components/Icon.astro";
+import Panel from "@/components/Panel.astro";
+import { education } from "@/data/education";
+import { experience } from "@/data/experience";
+import { profile } from "@/data/profile";
+import type { IconName } from "@/lib/icons";
+
+// `neofetch` output: the JS monogram as block art beside the CV summary in TUI panels. Each line
+// carries its boot timing (--n characters, --d duration, --t delay), so on the first visit the
+// logo and the panels write themselves line by line (see the boot rules in global.css).
+
+interface Props {
+	projectCount: number;
+	articleCount: number;
+}
+
+const { projectCount, articleCount } = Astro.props;
+
+// The JS monogram, rasterised from design/logo/mark.mjs by design/logo/ascii.ts.
+const logo = [
+	"          █▄",
+	"          ██",
+	"          ██      ▄▄▄▄",
+	"          ██    ▄█▀   ▀▄",
+	"          ██   ███     ▄▀",
+	"          ██    ▀█▄  ▄▀",
+	"          ██      ▀██▄",
+	"          ██   ▄▄▀▀  ▀█▄",
+	"      ▄▄▄▄█▄▀▀▀       ▀██",
+	"   ▄▀▀    ██           ██",
+	" ▄▀       ██           ██",
+	" ▀▄      ▄█▀         ▄█▀",
+	"  ▀▄▄▄▄▄█▀▀     ▀▀▀▀▀▀",
+	"      ▀",
+];
+
+/** Boot timing for one line: the logo starts first and runs faster than the panels. */
+function timing(text: string, index: number, group: "logo" | "info"): string {
+	const [start, stagger, perChar, max] = group === "logo" ? [1750, 32, 6, 220] : [1820, 42, 7, 300];
+	const n = Math.max(1, Math.min(text.length, 120));
+	return `--n:${n};--d:${Math.min(n * perChar, max)}ms;--t:${start + index * stagger}ms`;
+}
+
+interface Fact {
+	key: string;
+	value: string;
+	icon: IconName;
+	/** Clicking the value runs this command; `href` is the page it opens without JavaScript. */
+	command?: string;
+	href?: string;
+}
+
+const job = experience[0];
+const degree = education[0];
+
+const panels: { title: string; facts: Fact[] }[] = [
+	{
+		title: "Profile",
+		facts: [
+			{ key: "Role", value: profile.role, icon: "user" },
+			{ key: "Location", value: profile.location, icon: "location" },
+			...(job
+				? [{ key: "Work", value: `${job.role}, ${job.company}`, icon: "work" as const }]
+				: []),
+			...(degree
+				? [
+						{
+							key: "Education",
+							value: `${degree.degree}, ${degree.institution}`,
+							icon: "education" as const,
+						},
+					]
+				: []),
+		],
+	},
+	{
+		title: "Site",
+		facts: [
+			{
+				key: "Projects",
+				value: String(projectCount),
+				icon: "code",
+				command: "cd ~/projects && ls",
+				href: "/projects/",
+			},
+			{
+				key: "Articles",
+				value: String(articleCount),
+				icon: "book",
+				command: "cd ~/articles && ls",
+				href: "/articles/",
+			},
+			{ key: "Host", value: "Oracle Cloud, self-hosted", icon: "terminal" },
+			{ key: "Built with", value: "Astro, Tailwind CSS, Hack Nerd Font", icon: "link" },
+		],
+	},
+];
+
+const linkIcons: Record<string, IconName> = { GitHub: "github", LinkedIn: "linkedin" };
+const links = profile.links.map((link) => ({
+	...link,
+	icon: linkIcons[link.label] ?? "link",
+	text: link.href.replace(/^https?:\/\/(www\.)?/, ""),
+}));
+
+const swatches = [
+	"bg-muted",
+	"bg-accent",
+	"bg-green",
+	"bg-yellow",
+	"bg-blue",
+	"bg-magenta",
+	"bg-cyan",
+	"bg-ink",
+];
+
+// Running index of the info lines, in reading order, for their boot timing.
+let line = 0;
+const nameLine = timing(`joaquin@salas ${profile.name}`, line++, "info");
+const factLines = panels.map(({ facts }) =>
+	facts.map((fact) => timing(`  ${fact.key.padEnd(12)}${fact.value}`, line++, "info")),
+);
+const linkLines = links.map((link) => timing(`  ${link.text}`, line++, "info"));
+const emailLine = timing(`  ${profile.email}`, line++, "info");
+const swatchLine = timing("x".repeat(24), line++, "info");
+---
+
+<div class="flex flex-wrap items-start gap-x-[4ch] gap-y-6">
+	<div aria-hidden="true" class="mt-[2.6em] leading-none whitespace-pre text-accent">
+		{logo.map((row, i) => (
+			<div class="ln h-[1em]" style={timing(row, i, "logo")}>
+				{row}
+			</div>
+		))}
+	</div>
+
+	<div class="flex min-w-0 flex-[1_1_44ch] flex-col gap-[1.1em]">
+		<h1 class="ln font-bold" style={nameLine}>
+			<span aria-hidden="true" class="mr-[1ch] text-green">
+				joaquin@salas
+			</span>
+			{profile.name}
+		</h1>
+
+		{panels.map(({ title, facts }, p) => (
+			<Panel title={title}>
+				<dl>
+					{facts.map((fact, f) => (
+						<div class="ln grid grid-cols-[13ch_1fr] gap-x-[1ch]" style={factLines[p]?.[f]}>
+							<dt class="text-accent">
+								<Icon name={fact.icon} class="mr-[1ch]" />
+								{fact.key}
+							</dt>
+							<dd class="min-w-0 break-words">
+								{fact.command ? (
+									<a
+										href={fact.href}
+										data-cmd={fact.command}
+										class="text-cyan underline underline-offset-4"
+									>
+										{fact.value}
+									</a>
+								) : (
+									fact.value
+								)}
+							</dd>
+						</div>
+					))}
+				</dl>
+			</Panel>
+		))}
+
+		<Panel title="Contact">
+			<ul>
+				{links.map((link, i) => (
+					<li class="ln" style={linkLines[i]}>
+						<Icon name={link.icon} class="mr-[1ch] text-accent" />
+						<span class="sr-only">{link.label}:</span>
+						<ExternalLink href={link.href} class="break-all text-cyan underline underline-offset-4">
+							{link.text}
+						</ExternalLink>
+					</li>
+				))}
+				<li class="ln" style={emailLine}>
+					<Icon name="email" class="mr-[1ch] text-accent" />
+					<span class="sr-only">Email:</span>
+					<a
+						href={`mailto:${profile.email}`}
+						class="break-all text-cyan underline underline-offset-4"
+					>
+						{profile.email}
+					</a>
+				</li>
+			</ul>
+		</Panel>
+
+		<p aria-hidden="true" class="ln flex" style={swatchLine}>
+			{swatches.map((color) => (
+				<span class:list={["inline-block h-[1.2em] w-[3ch]", color]} />
+			))}
+		</p>
+	</div>
+</div>

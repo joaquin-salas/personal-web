@@ -1,0 +1,31 @@
+---
+import { COMMANDS } from "@/lib/terminal/commands";
+
+// `help` output. Commands without arguments run on click; the others are typed into the prompt
+// so the visitor can add the argument (`data-fill`, handled by Shell.astro).
+---
+
+<div class="space-y-[0.9em]">
+	<dl class="grid grid-cols-[18ch_1fr] gap-x-[2ch] max-sm:grid-cols-1">
+		{COMMANDS.map(({ name, usage, description }) => (
+			<>
+				<dt class="ln">
+					{usage ? (
+						<button type="button" data-fill={`${name} `} class="path text-accent">
+							{name} {usage}
+						</button>
+					) : (
+						<button type="button" data-cmd={name} class="path text-accent">
+							{name}
+						</button>
+					)}
+				</dt>
+				<dd class="ln text-muted max-sm:mb-[0.4em]">{description}</dd>
+			</>
+		))}
+	</dl>
+	<p class="ln text-muted">
+		Tab completes, ↑ ↓ browse history, Ctrl+L clears. Click any path to open it.
+	</p>
+	<p class="ln text-muted">There may be a few commands this list doesn't mention.</p>
+</div>

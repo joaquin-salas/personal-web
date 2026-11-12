@@ -1,0 +1,37 @@
+---
+import Icon from "@/components/Icon.astro";
+import type { IconName } from "@/lib/icons";
+
+// The line under the prompt, like the footer of a TUI: the site's main navigation. The current
+// section is in the accent color and marked for screen readers.
+
+export type Window = "home" | "projects" | "articles";
+
+interface Props {
+	current: Window;
+}
+
+const { current } = Astro.props;
+
+const windows: { id: Window; label: string; href: string; icon: IconName }[] = [
+	{ id: "home", label: "~", href: "/", icon: "home" },
+	{ id: "projects", label: "projects", href: "/projects/", icon: "folder" },
+	{ id: "articles", label: "articles", href: "/articles/", icon: "folder" },
+];
+---
+
+<footer class="flex items-center justify-between gap-4 px-[1ch] pt-[0.35em] text-sm text-muted">
+	<nav aria-label="Main" class="flex flex-wrap gap-x-[3ch]">
+		{windows.map((window) => (
+			<a
+				href={window.href}
+				aria-current={window.id === current ? "page" : undefined}
+				class="hover:text-ink aria-[current=page]:text-accent"
+			>
+				<Icon name={window.icon} class="mr-[1ch]" />
+				{window.label}
+			</a>
+		))}
+	</nav>
+	<p class="max-sm:hidden">joaquinsalas.dev</p>
+</footer>

@@ -1,136 +1,27 @@
 ---
-import ArticleCard from "@/components/ArticleCard.astro";
-import ExperienceItem from "@/components/ExperienceItem.astro";
-import Monogram from "@/components/Monogram.astro";
-import ProjectCard from "@/components/ProjectCard.astro";
-import Section from "@/components/Section.astro";
-import SectionNav from "@/components/SectionNav.astro";
-import SiteFooter from "@/components/SiteFooter.astro";
-import SocialLinks from "@/components/SocialLinks.astro";
-import ThemeToggle from "@/components/ThemeToggle.astro";
-import { education } from "@/data/education";
-import { experience } from "@/data/experience";
+import Command from "@/components/Command.astro";
+import Neofetch from "@/components/Neofetch.astro";
 import { profile } from "@/data/profile";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getArticles } from "@/lib/articles";
-import { formatPeriod } from "@/lib/dates";
-import { getFeaturedProjects } from "@/lib/projects";
+import TerminalLayout from "@/layouts/TerminalLayout.astro";
+import { getFilesystem } from "@/lib/filesystem";
+import { nodeAt } from "@/lib/terminal/fs";
 
-const featuredProjects = await getFeaturedProjects();
-const articles = await getArticles();
-const latestArticles = articles.slice(0, 4);
-
-// Only link to sections that are actually rendered.
-const sections = [
-	{ id: "about", title: "About" },
-	{ id: "experience", title: "Experience" },
-	{ id: "education", title: "Education" },
-	...(featuredProjects.length > 0 ? [{ id: "projects", title: "Projects" }] : []),
-	...(latestArticles.length > 0 ? [{ id: "articles", title: "Articles" }] : []),
-];
-
-const links = [...profile.links, { label: "Email", href: `mailto:${profile.email}` }];
+// The home page: the terminal boots (first visit of the session) and runs `neofetch`.
+const fs = await getFilesystem();
+const count = (folder: string) => {
+	const node = nodeAt(fs, [folder]);
+	return node?.kind === "dir" ? node.children.length : 0;
+};
 ---
 
-<BaseLayout title={`${profile.name}, ${profile.role}`} description={profile.tagline}>
-	<div class="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16 desktop:flex desktop:gap-20">
-		<!-- On desktop the header is pinned, so its spacing and name shrink with the viewport height
-		(short windows, zoom, OS scaling) to keep it all on screen. -->
-		<header class="pt-16 pb-20 desktop:sticky desktop:top-0 desktop:flex desktop:h-screen desktop:w-5/12 desktop:flex-col desktop:justify-between desktop:gap-4 desktop:py-[clamp(1rem,5vh,5rem)]">
-			<div>
-				<Monogram class="mb-8 size-12 desktop:mb-[clamp(0.75rem,3vh,2rem)]" cut="regular" />
-				<h1 class="font-display text-[clamp(4.5rem,10vw,7.5rem)] leading-[0.82] font-extrabold tracking-tight font-stretch-condensed desktop:text-[min(10vw,11vh,7.5rem)]">
-					{profile.name.split(" ").map((word) => (
-						<span class="block">{word}</span>
-					))}
-				</h1>
-				<p class="mt-8 font-display text-xl font-medium desktop:mt-[clamp(0.75rem,3vh,2rem)]">
-					{profile.role} in {profile.location}
-				</p>
-				<p class="mt-3 max-w-sm text-muted">{profile.tagline}</p>
-				<div class="mt-14 hidden desktop:mt-[clamp(1rem,5vh,3.5rem)] desktop:block">
-					<SectionNav sections={sections} />
-				</div>
-			</div>
-			<div class="mt-10 flex items-center gap-5 desktop:mt-0">
-				<SocialLinks links={links} />
-				<ThemeToggle />
-			</div>
-		</header>
-
-		<main class="desktop:w-7/12 desktop:pt-20">
-			<Section id="about" title="About">
-				<div class="max-w-prose space-y-4 text-lg leading-[1.7]">
-					{profile.about.map((paragraph) => (
-						<p>{paragraph}</p>
-					))}
-				</div>
-			</Section>
-
-			<Section id="experience" title="Experience">
-				<ol>
-					{experience.map((job) => (
-						<ExperienceItem job={job} />
-					))}
-				</ol>
-			</Section>
-
-			<Section id="education" title="Education">
-				<ul class="space-y-8">
-					{education.map((item) => (
-						<li class="grid gap-2 sm:grid-cols-[9rem_1fr] sm:gap-8">
-							<p class="font-display text-sm text-muted sm:pt-1">
-								{formatPeriod(item.start, item.end)}
-							</p>
-							<div>
-								<h3 class="font-display text-lg leading-snug font-semibold">{item.degree}</h3>
-								<p class="mt-1 text-muted">
-									{item.institution}, {item.location}
-								</p>
-								{item.details && <p class="mt-2">{item.details}</p>}
-							</div>
-						</li>
-					))}
-				</ul>
-			</Section>
-
-			{featuredProjects.length > 0 && (
-				<Section id="projects" title="Projects">
-					<ul class="space-y-12">
-						{featuredProjects.map((project) => (
-							<li>
-								<ProjectCard project={project} />
-							</li>
-						))}
-					</ul>
-					<a
-						href="/projects/"
-						class="mt-12 inline-block font-display font-medium text-accent underline underline-offset-4"
-					>
-						See all projects
-					</a>
-				</Section>
-			)}
-
-			{latestArticles.length > 0 && (
-				<Section id="articles" title="Articles">
-					<ul class="space-y-8">
-						{latestArticles.map((article) => (
-							<li>
-								<ArticleCard article={article} />
-							</li>
-						))}
-					</ul>
-					<a
-						href="/articles/"
-						class="mt-12 inline-block font-display font-medium text-accent underline underline-offset-4"
-					>
-						See all articles
-					</a>
-				</Section>
-			)}
-
-			<SiteFooter />
-		</main>
-	</div>
-</BaseLayout>
+<TerminalLayout
+	title={`${profile.name}, ${profile.role}`}
+	description={profile.tagline}
+	window="home"
+	cwd={[]}
+	boot
+>
+	<Command cwd="~" command="neofetch" title="Summary" boot>
+		<Neofetch projectCount={count("projects")} articleCount={count("articles")} />
+	</Command>
+</TerminalLayout>

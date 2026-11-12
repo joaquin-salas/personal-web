@@ -1,12 +1,15 @@
 ---
 import type { ImageMetadata, MarkdownHeading } from "astro";
 import { Image } from "astro:assets";
+import Bat from "@/components/Bat.astro";
+import Command from "@/components/Command.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
-import PageLayout from "@/layouts/PageLayout.astro";
+import TerminalLayout from "@/layouts/TerminalLayout.astro";
 import { formatDate } from "@/lib/dates";
 
-// Reading page shared by articles and projects. The Markdown body goes in the default slot;
-// page-specific details (tags, stack, links) go in the `meta` slot under the dates.
+// Reading page shared by articles and projects: the session has just run `cat <slug>.md`, so the
+// entry is shown in the `cat` frame with its title, dates and details (the `meta` slot) in the
+// header and the rendered Markdown below.
 
 interface Props {
 	title: string;
@@ -15,38 +18,48 @@ interface Props {
 	updatedDate?: Date;
 	cover?: { src: ImageMetadata; alt: string };
 	headings: MarkdownHeading[];
+	/** The folder the file lives in. */
+	folder: "projects" | "articles";
+	/** The entry's slug; the file is shown as `<slug>.md`. */
+	slug: string;
 }
 
-const { title, description, pubDate, updatedDate, cover, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, cover, headings, folder, slug } = Astro.props;
+const file = `${slug}.md`;
 ---
 
-<PageLayout title={`${title} | Joaquín Salas`} description={description}>
-	<article>
-		<header class="mb-12 font-display">
-			<h1 class="text-4xl leading-[1.05] font-bold tracking-tight text-balance font-stretch-semi-condensed sm:text-5xl">
-				{title}
-			</h1>
-			<p class="mt-4 text-sm text-muted">
-				<time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-				{updatedDate && (
-					<>
-						, updated <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
-					</>
-				)}
-			</p>
-			<div class="mt-2 text-sm text-muted">
-				<slot name="meta" />
-			</div>
-			{/* In dark mode, a light backing keeps transparent covers (logos, diagrams) visible. */}
-			{cover && (
-				<Image src={cover.src} alt={cover.alt} class="mt-10 w-full dark:rounded-md dark:bg-ink" />
-			)}
-		</header>
+<TerminalLayout
+	title={`${title} | Joaquín Salas`}
+	description={description}
+	window={folder}
+	cwd={[folder]}
+>
+	<Command cwd={`~/${folder}`} command={`cat ${file}`} title={title}>
+		<article>
+			<Bat file={file}>
+				<Fragment slot="header">
+					<h1 class="font-bold text-balance">{title}</h1>
+					<p class="text-muted">
+						Published <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+						{updatedDate && (
+							<>
+								, updated{" "}
+								<time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+							</>
+						)}
+					</p>
+					<div class="text-muted">
+						<slot name="meta" />
+					</div>
+				</Fragment>
+				{/* A light backing keeps transparent covers (logos, diagrams) visible on the screen. */}
+				{cover && <Image src={cover.src} alt={cover.alt} class="mb-8 w-full bg-ink" />}
+				<div class="prose max-w-reading prose-terminal">
+					<slot />
+				</div>
+			</Bat>
+		</article>
+	</Command>
 
-		<TableOfContents headings={headings} />
-
-		<div class="prose max-w-none prose-almagra">
-			<slot />
-		</div>
-	</article>
-</PageLayout>
+	<TableOfContents slot="overlay" headings={headings} />
+</TerminalLayout>

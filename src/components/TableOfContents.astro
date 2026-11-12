@@ -17,7 +17,7 @@ const sections = Astro.props.headings.filter(({ depth }) => depth === 2 || depth
 	<nav
 		aria-label="On this page"
 		data-toc
-		class="group fixed top-1/2 right-6 z-10 hidden -translate-y-1/2 font-display text-sm lg:block"
+		class="group absolute top-1/2 right-4 z-10 hidden -translate-y-1/2 text-sm xl:block"
 	>
 		{/* The rail is only a picture of the panel; the panel holds the real links. */}
 		<ol
@@ -99,7 +99,7 @@ const sections = Astro.props.headings.filter(({ depth }) => depth === 2 || depth
 
 	if (links.length) {
 		let queued = false;
-		addEventListener(
+		document.addEventListener(
 			"scroll",
 			() => {
 				if (queued) return;
@@ -109,7 +109,8 @@ const sections = Astro.props.headings.filter(({ depth }) => depth === 2 || depth
 					update();
 				});
 			},
-			{ passive: true },
+			// Capture: the page scrolls inside the terminal screen, and scroll events do not bubble.
+			{ passive: true, capture: true },
 		);
 		addEventListener("resize", update);
 		update();

@@ -1,0 +1,52 @@
+---
+import FsLink from "@/components/FsLink.astro";
+import { formatShortDate } from "@/lib/dates";
+import type { DirNode } from "@/lib/terminal/fs";
+
+// `ls` output, always the long view: permissions and date, the name, then the title and
+// description, so a reader knows what each file is before opening it.
+
+interface Props {
+	dir: DirNode;
+	/** The folder's path, e.g. "~/projects". */
+	path: string;
+}
+
+const { dir, path } = Astro.props;
+---
+
+{dir.children.length === 0 ? (
+	<p class="ln">total 0</p>
+) : (
+	<ul
+		aria-label={`Contents of ${path}`}
+		class="grid grid-cols-[auto_1fr] gap-x-[2ch] gap-y-[0.15em] max-sm:grid-cols-1"
+	>
+		{dir.children.map((node) => (
+			<li class="contents">
+				<p class="ln whitespace-pre text-muted">
+					{node.kind === "dir" ? (
+						<>
+							<span class="max-sm:hidden">drwxr-xr-x </span>
+							{`${String(node.children.length).padStart(2)} items`.padEnd(11)}
+						</>
+					) : (
+						<>
+							<span class="max-sm:hidden">.rw-r--r-- </span>
+							{node.date ? formatShortDate(new Date(node.date)) : ""}
+						</>
+					)}
+				</p>
+				<p class="ln min-w-0 break-words">
+					<FsLink node={node} path={`${path}/${node.name}`} />
+				</p>
+				{node.kind === "file" && node.title && (
+					<div class="col-start-2 mb-[0.6em] max-w-[72ch] max-sm:col-start-1">
+						<p class="ln font-bold">{node.title}</p>
+						{node.description && <p class="ln text-muted">{node.description}</p>}
+					</div>
+				)}
+			</li>
+		))}
+	</ul>
+)}

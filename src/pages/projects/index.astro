@@ -1,29 +1,22 @@
 ---
-import ProjectCard from "@/components/ProjectCard.astro";
-import PageLayout from "@/layouts/PageLayout.astro";
-import { getProjects } from "@/lib/projects";
+import Command from "@/components/Command.astro";
+import Listing from "@/components/Listing.astro";
+import TerminalLayout from "@/layouts/TerminalLayout.astro";
+import { getFilesystem } from "@/lib/filesystem";
+import { nodeAt } from "@/lib/terminal/fs";
 
-const projects = await getProjects();
+const projects = nodeAt(await getFilesystem(), ["projects"]);
 ---
 
-<PageLayout
+<TerminalLayout
 	title="Projects | Joaquín Salas"
 	description="Projects built by Joaquín Salas and how they were made."
+	window="projects"
+	cwd={["projects"]}
 >
-	<h1 class="font-display text-4xl font-bold tracking-tight font-stretch-semi-condensed sm:text-5xl">
-		Projects
-	</h1>
-	<p class="mt-4 text-lg text-muted">Things I've built, and how I built them.</p>
-
-	{projects.length === 0 ? (
-		<p class="mt-12">No projects published yet.</p>
-	) : (
-		<ul class="mt-14 space-y-14">
-			{projects.map((project) => (
-				<li>
-					<ProjectCard project={project} />
-				</li>
-			))}
-		</ul>
-	)}
-</PageLayout>
+	<h1 class="sr-only">Projects</h1>
+	<Command cwd="~" command="cd projects" title="Go to the projects folder" />
+	<Command cwd="~/projects" command="ls" title="All projects">
+		{projects?.kind === "dir" && <Listing dir={projects} path="~/projects" />}
+	</Command>
+</TerminalLayout>

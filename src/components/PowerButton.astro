@@ -1,0 +1,27 @@
+---
+import Icon from "@/components/Icon.astro";
+
+// The terminal's power switch, pinned to the top-right corner of every page: a key in the TUI's
+// own style (the prompt box's border and radius) with a status light, green while on. Pressing it
+// types `shutdown now`: the screen turns off and stays dark with only this key lit (red light, accent
+// glow, a hint); pressing it again, or any key, boots the home page. The behaviour lives in
+// Shell.astro; the `off:` variant applies while the screen is off.
+---
+
+<div class="fixed top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))] z-[41] flex items-center gap-[1.5ch]">
+	<p aria-hidden="true" class="hidden text-sm text-muted off:block">
+		press to power on
+	</p>
+	<button
+		id="power-button"
+		type="button"
+		aria-label="Turn the terminal off"
+		class="flex h-9 items-center gap-[1ch] rounded-lg border border-rule bg-background px-[1.2ch] text-muted transition-colors duration-150 hover:border-accent/60 hover:text-accent active:translate-y-px off:border-accent/60 off:text-accent off:shadow-[0_0_14px_-2px] off:shadow-accent/55"
+	>
+		<Icon name="power" />
+		<span
+			aria-hidden="true"
+			class="size-[7px] rounded-full bg-green shadow-[0_0_6px] shadow-green transition-colors duration-200 off:bg-accent off:shadow-[0_0_8px] off:shadow-accent"
+		></span>
+	</button>
+</div>

@@ -14,8 +14,3 @@ export async function getProjects(): Promise<Project[]> {
 	);
 	return projects.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
-
-/** Projects marked `featured: true`, for the home page. */
-export async function getFeaturedProjects(): Promise<Project[]> {
-	return (await getProjects()).filter((project) => project.data.featured);
-}

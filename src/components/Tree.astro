@@ -1,0 +1,36 @@
+---
+import FsLink from "@/components/FsLink.astro";
+import Icon from "@/components/Icon.astro";
+import { treeLines, treeSummary, type DirNode } from "@/lib/terminal/fs";
+
+// `tree` output: every folder and file, each one clickable. Colors and icons follow `lsd`.
+
+interface Props {
+	dir: DirNode;
+	/** The folder's path, e.g. "~". */
+	path: string;
+}
+
+const { dir, path } = Astro.props;
+const lines = treeLines(dir, path);
+---
+
+<div>
+	<p class="ln font-bold text-blue">
+		<Icon name="folderOpen" class="mr-[1ch]" />
+		{path}
+	</p>
+	<ul aria-label={`Everything in ${path}`}>
+		{lines.map(({ prefix, node, path: nodePath }) => (
+			<li class="ln flex">
+				<span aria-hidden="true" class="shrink-0 whitespace-pre text-muted">
+					{prefix}
+				</span>
+				<span class="min-w-0 break-words">
+					<FsLink node={node} path={nodePath} />
+				</span>
+			</li>
+		))}
+	</ul>
+	<p class="ln mt-[0.6em]">{treeSummary(dir)}</p>
+</div>

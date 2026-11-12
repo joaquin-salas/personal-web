@@ -1,7 +1,7 @@
 ---
 import "@/styles/global.css";
 
-// HTML shell only. Pages and layouts decide their own <header>, <main> and <footer>.
+// HTML shell only. Layouts and pages decide their own <main> and landmarks.
 
 interface Props {
 	title: string;
@@ -11,33 +11,20 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
-<html lang="en" class="motion-safe:scroll-smooth">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#171512" media="(prefers-color-scheme: dark)" />
-		<!-- Runs before first paint so a dark page never flashes light: the stored choice, else the OS. -->
-		<script is:inline>
-			{
-				let theme = null;
-				try {
-					theme = localStorage.getItem("theme");
-				} catch {}
-				if (theme !== "light" && theme !== "dark") {
-					theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-				}
-				document.documentElement.dataset.theme = theme;
-			}
-		</script>
+		<meta name="theme-color" content="#0e0d0c" />
 		<!-- Browsers cache favicons hard; bump ?v= whenever the icons change. -->
 		<link rel="icon" href="/favicon.ico?v=3" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3" />
 		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 		<title>{title}</title>
+		<slot name="head" />
 	</head>
 	<body>
 		<slot />

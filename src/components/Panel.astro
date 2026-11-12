@@ -1,0 +1,24 @@
+---
+// A TUI panel: a rounded box with its title set into the top border, like the boxes in neofetch
+// configs or in tools like Claude Code.
+
+interface Props {
+	title: string;
+	class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<section
+	aria-label={title}
+	class:list={["relative rounded-lg border border-rule px-[2ch] pt-3 pb-2", className]}
+>
+	<p
+		aria-hidden="true"
+		class="absolute -top-[0.8em] left-[1.5ch] bg-background px-[1ch] text-accent"
+	>
+		{title}
+	</p>
+	<slot />
+</section>

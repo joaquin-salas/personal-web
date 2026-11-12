@@ -2,6 +2,7 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import { render } from "astro:content";
 import ExternalLink from "@/components/ExternalLink.astro";
+import Icon from "@/components/Icon.astro";
 import TagList from "@/components/TagList.astro";
 import ProseLayout from "@/layouts/ProseLayout.astro";
 import { getProjects } from "@/lib/projects";
@@ -18,19 +19,19 @@ const { stack, repo, demo } = project.data;
 const { Content, headings } = await render(project);
 ---
 
-<ProseLayout {...project.data} headings={headings}>
-	<div slot="meta" class="space-y-3">
-		<TagList tags={stack} label="Technologies" />
+<ProseLayout {...project.data} headings={headings} folder="projects" slug={project.id}>
+	<div slot="meta" class="space-y-1">
+		<TagList tags={stack} label="Stack" />
 		{(repo || demo) && (
-			<p class="flex gap-5 font-medium">
+			<p class="flex flex-wrap gap-x-[3ch]">
 				{repo && (
-					<ExternalLink href={repo} class="text-accent underline underline-offset-4">
-						View the code
+					<ExternalLink href={repo} class="text-cyan underline underline-offset-4">
+						<Icon name="github" /> View the code
 					</ExternalLink>
 				)}
 				{demo && (
-					<ExternalLink href={demo} class="text-accent underline underline-offset-4">
-						Open the live demo
+					<ExternalLink href={demo} class="text-cyan underline underline-offset-4">
+						<Icon name="external" /> Open the live demo
 					</ExternalLink>
 				)}
 			</p>

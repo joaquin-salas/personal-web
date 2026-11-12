@@ -1,0 +1,40 @@
+---
+import Icon from "@/components/Icon.astro";
+import { commandFor, type FsNode } from "@/lib/terminal/fs";
+
+// A folder or file in the output, with its `lsd` icon. Clicking it types and runs the matching
+// command (`data-cmd`, handled by Shell.astro). Folders and pages are real links too, so they work
+// without JavaScript and open in a new tab with a modifier key.
+
+interface Props {
+	node: FsNode;
+	/** The node's path, used in the command, e.g. "~/projects/raft-kv.md". */
+	path: string;
+}
+
+const { node, path } = Astro.props;
+const command = commandFor(node, path);
+---
+
+{node.kind === "dir" ? (
+	<a href={node.href} data-cmd={command} class="path font-bold text-blue">
+		<Icon name="folder" class="mr-[1ch]" />
+		{node.name}
+	</a>
+) : node.href ? (
+	<a href={node.href} data-cmd={command} class="path">
+		<Icon name="markdown" class="mr-[1ch] text-yellow" />
+		{node.name}
+	</a>
+) : (
+	<button type="button" data-cmd={command} class="path">
+		<Icon name="markdown" class="mr-[1ch] text-yellow" />
+		{node.name}
+	</button>
+)}
+{node.kind === "file" && node.featured && (
+	<span class="ml-[1ch] text-yellow">
+		<Icon name="star" />
+		<span class="sr-only">(featured)</span>
+	</span>
+)}

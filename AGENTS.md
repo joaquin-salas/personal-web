@@ -48,73 +48,99 @@ src/data/*.ts               queries, sorting, URLs      Tailwind classes live he
 ```
 
 - **Content**: Markdown (articles, projects) and typed TS data (CV). No logic, no styling.
-- **Logic**: plain TypeScript functions such as `getArticles()` or `getFeaturedProjects()`. No markup.
+- **Logic**: plain TypeScript functions such as `getArticles()` or `getFilesystem()`. No markup.
 - **Presentation**: Astro pages, layouts and components. They ask `src/lib/` for data and render it.
 
 ## Site map
 
-| URL                 | Page                                                       |
-| ------------------- | ---------------------------------------------------------- |
-| `/`                 | Home: CV + featured projects + latest articles (see below) |
-| `/articles/`        | All articles, newest first                                 |
-| `/articles/<slug>/` | One article                                                |
-| `/projects/`        | All projects                                               |
-| `/projects/<slug>/` | One project write-up (a single page, like an article)      |
-| `/cv.pdf`           | Downloadable CV (static file in `public/`)                 |
+| URL                 | Page                                                   |
+| ------------------- | ------------------------------------------------------ |
+| `/`                 | Home: the terminal boots and runs neofetch (see below) |
+| `/articles/`        | All articles, newest first                             |
+| `/articles/<slug>/` | One article                                            |
+| `/projects/`        | All projects                                           |
+| `/projects/<slug>/` | One project write-up (a single page, like an article)  |
+| `/cv.pdf`           | Downloadable CV (static file in `public/`)             |
 
-### Home page
+### The terminal
 
-A two-column layout on desktop: the left column is sticky, the right one scrolls. On mobile it
-collapses to a single column. The structure is inspired by brittanychiang.com, but the visual design
-(colors, typography, details) must be our own.
+Every page is the same terminal (`TerminalLayout`): the whole window is the screen. The session
+output scrolls in a centred column; `Shell` keeps the suggested commands, the prompt and the
+`StatusBar` line (the main navigation: `~ projects articles`) fixed at the bottom. Each page is a
+session that has already run its command, rendered at build time:
 
-| Section               | Shows                                                                | Data source                       |
-| --------------------- | -------------------------------------------------------------------- | --------------------------------- |
-| Header (left, sticky) | Name, role, tagline, in-page nav, links (GitHub, LinkedIn, Email)    | `src/data/profile.ts`             |
-| About                 | A few paragraphs                                                     | `src/data/profile.ts`             |
-| Experience            | Timeline: dates, role at company, summary, highlights, stack         | `src/data/experience.ts`          |
-| Education             | Dates, degree, school                                                | `src/data/education.ts`           |
-| Projects              | Featured projects (title, description, stack) + link to `/projects/` | `projects` collection, `featured` |
-| Articles              | Latest 4 articles (date, title, description) + link to `/articles/`  | `articles` collection             |
-| Footer                | Colophon (typefaces, tools, "Self-hosted on Oracle Cloud") and ©     | `src/data/profile.ts` (name)      |
+| Page                | Session                                | Output component      |
+| ------------------- | -------------------------------------- | --------------------- |
+| `/`                 | `neofetch` (boot animation, see below) | `Neofetch`            |
+| `/projects/`        | `cd projects`, `ls`                    | `Listing`             |
+| `/articles/`        | `cd articles`, `ls`                    | `Listing`             |
+| `/<folder>/<slug>/` | `cat <slug>.md`, in `ProseLayout`      | `Bat` + rendered body |
 
-Every other page uses `PageLayout`: a single column with `SiteHeader` (monogram + name linking
-home, Projects/Articles nav) and `SiteFooter`. Articles and projects add `ProseLayout` on top,
-which shows `TableOfContents` (`##`/`###` headings, at least two) as a rail of lines in the right
-margin on wide screens: the current section is highlighted, and hover/focus opens the titles.
+**The prompt works.** Commands (`src/lib/terminal/commands.ts`): `help`, `neofetch`, `ls` (always
+the long view), `tree`, `cd`, `pwd`, `cat` (CV documents print in the terminal; articles and
+projects open their page), `open` (also `github`, `linkedin`, `email`), `whoami`, `clear`,
+`history`, `echo`, and easter eggs (`sudo`, `rm`, `vim`, `nano`, `theme`, `pacman`, `exit`,
+`reboot`, `shutdown now`). Tab completes, ↑/↓ browse history, Ctrl+C cancels, Ctrl+L clears. Every path in the
+output has `data-cmd`: clicking it types the command into the prompt, then runs it. Folders and
+pages are real `<a href>` links too, so they work without JavaScript.
 
-### Design direction ("Almagra")
+**One renderer.** Output that never changes (neofetch, `ls` and `tree` of every folder, the CV
+documents in `CvDocument`, `help`) is rendered by Astro into `<template>`s in `Shell`; the browser
+clones them. Only short dynamic lines (errors, `pwd`, `history`…) are built in the script. The
+filesystem (`getFilesystem()`) is sent to the browser as JSON for `cd`, `cat` and completion; the
+path logic in `src/lib/terminal/fs.ts` is shared by the build and the browser, so it must not
+import from Astro. The working directory and history live in `sessionStorage`.
 
-The full creative brief is `design/BRIEF.md`; check it before any visual change. In short: quiet,
-text-first pages that read like a well-set book. Warm paper, warm black ink and one accent; Granada
-is only an undertone. The oversized condensed name on the home page is the one bold element.
+**Boot.** When a visitor arrives at the home page (from another site, a typed address, a bookmark
+or a reload; not when moving around the site or going back), an inline head script sets `data-boot` on
+`<html>`; CSS does the rest: the screen powers on, `neofetch` types itself, and each output line
+(`.ln`) writes itself in using its `--n`/`--d`/`--t` timing (set at build time in `Neofetch`). Any
+key or click skips it; `prefers-reduced-motion` never plays it. Output of later commands writes
+itself in quickly (`.fresh`).
 
-- Logo: the JS monogram (`Monogram` component), one brush-pen stroke in `ink`. Its source files
-  and usage guide live in `design/logo/` (`USAGE.md`): the `regular` cut at 48px and up, `small`
-  below. The previous monoline logo is kept in `design/older-logo/`.
-- Palette (tokens in `global.css`): `background` paper, `ink` warm black, `muted` (dates,
-  descriptions, draft labels), `rule` (dividers, timeline), `accent` almagra clay red (links, focus,
-  note callouts; the only accent), `caution` deep ochre (warning callouts), `code` (code
-  backgrounds).
-- Type: Bricolage Grotesque (`font-display`: name, headings, UI), Literata (`font-serif`: body and
-  article text, 18px / 1.7 in articles), JetBrains Mono (`font-mono`: code only). Self-hosted via
-  Fontsource.
-- Width: single-column pages are `max-w-page` (the `--container-page` token, 48rem). Header,
-  title and body share that one column; don't narrow text inside it.
+**Power.** `PowerButton` is pinned to the top-right corner of every page: a TUI key with a status
+light (green while on). Pressing it types `shutdown now`; `shutdown now` and `exit` turn the screen
+off (picture to line to dot) and it stays dark with only the key lit (red light) and a hint, until
+the key or any other key is pressed, which boots the home page. `reboot` turns it off and boots
+again straight away. The `off:` variant styles the off state.
+
+Articles and projects also show `TableOfContents` (`##`/`###` headings, at least two) as a rail of
+lines on the right of the screen on wide windows (the layout's `overlay` slot).
+
+### Design direction (a 70s terminal you can use, with modern icons)
+
+The full creative brief is `design/BRIEF.md`; check it before any visual change. In short: the
+window is a 70s terminal screen (white phosphor on black, faint glow and scanlines, thick blinking
+block cursor) running a modern TUI: one warm accent, rounded panels with titles in the border (like
+Claude Code), `lsd` icons, `cat` with a `bat`-style frame, `neofetch`. Nothing requires typing.
+
+- Logo: the JS monogram as block-character art in `Neofetch` (generated by
+  `node design/logo/ascii.ts` from `design/logo/mark.mjs`). The SVG files in `design/logo/` are
+  the favicons (`USAGE.md`).
+- Palette (tokens in `global.css`, dark only): `background`, `ink` (text), `muted` (dates,
+  descriptions, tree lines, status line), `rule` (panel borders, dividers, the `cat` frame), `code`
+  (code blocks), `accent` almagra (prompt `$`, logo, panel titles, headings, focus), and ANSI colors
+  with one role each: `green` (user@host), `yellow` (Markdown file icons, star, warnings), `blue`
+  (directories, notes), `cyan` (links), `magenta` (spare). New colors must pass WCAG AA.
+- Panels: `<Panel title="…">` for boxed groups (neofetch). Use them for real groups, not for every
+  block of output.
+- Glass: `crt` (text glow) on the screen and `glass` (scanlines, vignette) over it. Keep them faint.
+- Type: Hack Nerd Font Mono (`font-mono`) for everything, 16px (15px on phones; the prompt input is
+  always 16px so phones do not zoom). Shipped as subsets built by `node design/fonts/build.ts`:
+  text plus only the icons in `src/lib/icons.ts`. After adding an icon there, rebuild the fonts.
+- Icons: `<Icon name="…" />` (Nerd Font glyphs, `aria-hidden`); the text next to it carries the
+  meaning. No emoji.
+- Width: terminal output `max-w-terminal` (100ch), reading text `max-w-reading` (82ch).
+- Markdown is rendered, not raw (`prose prose-terminal`): the first `h1` is a block in the accent
+  color, `h2` bold accent, bullets drawn inside the item (lines that write themselves in clip
+  anything outside their box).
 - Code: Shiki's `css-variables` theme, colored by the `--astro-code-*` tokens in `global.css`.
   Blocks show their language as a small label; no copy button.
-- Light and dark: every color token is `light-dark(light, dark)`, so each color is defined once.
-  The site follows the OS; `ThemeToggle` (top bar, and next to the home links) overrides it and
-  stores the choice. BaseLayout's inline head script sets `data-theme` on `<html>` before first
-  paint (no flash). Use the `dark:` variant only when a token can't express it. New colors must
-  pass WCAG AA in both themes.
-- Lists, not boxes: projects and articles are rows separated by space, not bordered cards. Tech
-  stacks and tags are plain comma-separated text, not chips.
-- Structure carries meaning: the timeline line is only on experience because it is chronological.
-- No decorative motion (no fade-ins, no hover-lift). Feedback is color/underline on links and a
-  visible focus ring. One exception: an overlay that opens on hover/focus (`TableOfContents`) may
-  fade/slide in with a short (~150ms) opacity/transform transition, `motion-safe:` only.
-- Copy says what a link does ("See all projects"), no `→` suffixes, no `A · B · C` meta strings.
+- Lists, not boxes: tech stacks and tags are plain comma-separated text (`TagList`), not chips.
+- Motion: only the boot, the quick write-in of new output, the blinking cursor and the
+  `TableOfContents` panel (~150ms). No flicker, no fade-ins elsewhere. All of it is off for
+  `prefers-reduced-motion`.
+- Copy says what a link does ("View the code"), no `→` suffixes, no `A · B · C` meta strings.
 
 ## Project structure
 
@@ -126,26 +152,31 @@ src/
 ├── content.config.ts         Collection schemas (frontmatter is validated at build time).
 ├── data/                     CV data as typed TS: profile.ts, experience.ts, education.ts.
 ├── lib/                      Logic with no markup: articles.ts, projects.ts (queries, sorting,
-│                             URLs), dates.ts (date formatting).
+│                             URLs), filesystem.ts (builds the site's folder tree), icons.ts
+│                             (Nerd Font glyphs), dates.ts (date formatting), and terminal/:
+│                             fs.ts (paths, `tree` lines, completion) and commands.ts (the
+│                             command list), shared by the build and the browser.
 ├── pages/                    One file per URL. Fetch data from src/lib/ and compose components.
 │   ├── index.astro               → /
 │   ├── articles/index.astro      → /articles/
 │   ├── articles/[slug].astro     → /articles/<slug>/
 │   ├── projects/index.astro      → /projects/
 │   └── projects/[slug].astro     → /projects/<slug>/
-├── layouts/                  BaseLayout   <html lang="en">, <head>, global CSS. Used by every page.
-│                             PageLayout   Single column + SiteHeader + SiteFooter (all but home).
-│                             ProseLayout  PageLayout + title, dates, cover, `prose` body.
-├── components/               Reusable UI with typed Props: ArticleCard, Callout (for .mdx),
-│                             ExperienceItem, ExternalLink, Monogram, ProjectCard, Section,
-│                             SectionNav, SiteHeader, SiteFooter, SocialLinks, TableOfContents,
-│                             TagList, ThemeToggle.
-├── assets/                   Images used by components (optimized by Astro).
-└── styles/global.css         Font imports, Tailwind, design tokens (`@theme`), prose colors.
+├── layouts/                  BaseLayout      <html lang="en">, <head>, global CSS. Used by every page.
+│                             TerminalLayout  The screen: scrolling output, Shell, boot script.
+│                             ProseLayout     TerminalLayout + `cat` session, `Bat` frame, `prose` body.
+├── components/               Reusable UI with typed Props. Terminal: Shell (prompt, output
+│                             templates and the client script), Command (a prompt and its
+│                             output), Prompt, StatusBar, PowerButton. Output: Neofetch, Panel, Listing (`ls`),
+│                             Tree, Bat (`cat` frame), CvDocument, Help, FsLink (clickable path).
+│                             Other: Callout (for .mdx), ExternalLink, Icon, TableOfContents,
+│                             TagList.
+├── assets/                   Images used by components (optimized by Astro); fonts/ (generated).
+└── styles/global.css         Font faces, Tailwind, design tokens (`@theme`), glass, motion, prose.
 public/                       Copied as-is to the site root (favicons, cv.pdf, robots.txt).
-design/                       Logo source files and their build script. Not shipped as files:
-                              the favicons in `public/` are copied from `design/logo/`, and
-                              `Monogram` imports `design/logo/mark.mjs` at build time.
+design/                       Design sources and build scripts, not shipped as files: logo/ (the
+                              favicons in `public/` are copied from it; ascii.ts prints the
+                              neofetch logo) and fonts/ (build.ts writes src/assets/fonts/).
 deploy/                       Server-side files: nginx.conf (the container's web server) and
                               compose.yaml (runs the published image on the server).
 Dockerfile                    Production image: builds the site, serves `dist/` with nginx on 8080.
@@ -184,7 +215,7 @@ compose.yaml                  Runs that image locally for testing.
 | `stack`       | —        | required | Technologies used, e.g. `["Go", "Kafka"]`          |
 | `repo`        | —        | optional | URL                                                |
 | `demo`        | —        | optional | URL                                                |
-| `featured`    | —        | optional | `true` shows the project on the home page          |
+| `featured`    | —        | optional | `true` stars the project in `tree` and `ls -l`     |
 | `cover`       | optional | optional | `{ src: ./cover.png, alt: "…" }`, top of the page  |
 | `draft`       | optional | optional | `true` shows it in `pnpm dev` only, never in build |
 
@@ -223,14 +254,14 @@ compose.yaml                  Runs that image locally for testing.
   token-based classes (`bg-background`, `text-accent`), not raw values (`bg-[#0a192f]`).
 - Tailwind classes live only in components, layouts and pages, never in `src/content/` or
   `src/data/`.
-- Markdown bodies are styled in one place: the `prose prose-almagra` wrapper in `ProseLayout`
-  (colors, sizes and code mapped to tokens by the `.prose-almagra` rules in `global.css`).
+- Markdown bodies are styled in one place: the `prose prose-terminal` wrapper (`ProseLayout`, `CvDocument`)
+  (colors, sizes and code mapped to tokens by the `.prose-terminal` rules in `global.css`).
 - Code blocks use Shiki's `css-variables` theme (`astro.config.ts`), colored from `global.css`.
 - No custom CSS files besides `global.css` unless Tailwind truly can't express something.
 
 ### Markup and accessibility
 
-- Components are PascalCase (`ArticleCard.astro`); TS modules are lowercase (`articles.ts`).
+- Components are PascalCase (`StatusBar.astro`); TS modules are lowercase (`articles.ts`).
 - Semantic HTML: landmarks (`header`, `nav`, `main`, `footer`), one `<h1>` per page, `aria-label`
   on navs/lists that need a name, `alt` on every image, `<time datetime>` for dates.
 - Use Astro's `<Image />` from `astro:assets` for images in `src/`, not raw `<img>`.
@@ -258,8 +289,8 @@ compose.yaml                  Runs that image locally for testing.
 ## Common tasks
 
 - **Write an article:** create `src/content/articles/<slug>/index.md` with the frontmatter above.
-- **Write up a project:** create `src/content/projects/<slug>/index.md`; add `featured: true` to show
-  it on the home page.
+- **Write up a project:** create `src/content/projects/<slug>/index.md`; add `featured: true` to star
+  it in listings.
 - **Edit CV content:** the matching file in `src/data/`. Replace `public/cv.pdf` for the PDF.
 - **Change the look:** tokens in `src/styles/global.css`, or classes in the relevant component.
 - **Add a page:** a file in `src/pages/` and, if it should be reachable, a link in the relevant nav.

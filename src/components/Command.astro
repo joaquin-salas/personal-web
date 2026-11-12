@@ -1,0 +1,26 @@
+---
+import Prompt from "@/components/Prompt.astro";
+
+// One command and its output, as a section of the session. The prompt is what sighted readers
+// see; `title` is the section's heading for screen readers. `boot` marks the home page's first
+// command, which types itself and writes its output during the boot sequence.
+
+interface Props {
+	cwd: string;
+	command: string;
+	title: string;
+	boot?: boolean;
+}
+
+const { cwd, command, title, boot = false } = Astro.props;
+---
+
+<section class="mb-[1.4em]">
+	<h2 class="sr-only">{title}</h2>
+	<Prompt cwd={cwd} command={command} boot={boot} />
+	{Astro.slots.has("default") && (
+		<div class:list={["mt-2", boot && "boot-output"]}>
+			<slot />
+		</div>
+	)}
+</section>

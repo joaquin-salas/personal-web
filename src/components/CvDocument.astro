@@ -1,0 +1,65 @@
+---
+import Bat from "@/components/Bat.astro";
+import { education } from "@/data/education";
+import { experience } from "@/data/experience";
+import { profile } from "@/data/profile";
+import { formatPeriod } from "@/lib/dates";
+
+// What `cat about.md`, `cat experience.md` and `cat education.md` print: the CV data, rendered
+// as Markdown inside the `cat` frame.
+
+interface Props {
+	file: "about.md" | "experience.md" | "education.md";
+}
+
+const { file } = Astro.props;
+---
+
+<Bat file={file}>
+	<div class="prose max-w-reading prose-terminal">
+		{file === "about.md" && (
+			<>
+				<h1 class="ln">About</h1>
+				{profile.about.map((paragraph) => (
+					<p class="ln">{paragraph}</p>
+				))}
+			</>
+		)}
+		{file === "experience.md" && (
+			<>
+				<h1 class="ln">Experience</h1>
+				{experience.map((job) => (
+					<>
+						<h2 class="ln">
+							{job.role}, {job.company}
+						</h2>
+						<p class="ln meta">{formatPeriod(job.start, job.end)}</p>
+						<p class="ln">{job.summary}</p>
+						<ul>
+							{job.highlights.map((highlight) => (
+								<li class="ln">{highlight}</li>
+							))}
+						</ul>
+						<p class="ln">
+							<span class="text-muted">Stack:</span> {job.stack.join(", ")}
+						</p>
+					</>
+				))}
+			</>
+		)}
+		{file === "education.md" && (
+			<>
+				<h1 class="ln">Education</h1>
+				{education.map((item) => (
+					<>
+						<h2 class="ln">{item.degree}</h2>
+						<p class="ln meta">
+							{formatPeriod(item.start, item.end)}, {item.institution}, {item.location}
+						</p>
+						{item.details && <p class="ln">{item.details}</p>}
+					</>
+				))}
+			</>
+		)}
+	</div>
+</Bat>

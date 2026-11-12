@@ -1,0 +1,19 @@
+---
+import { icons, type IconName } from "@/lib/icons";
+
+// A Nerd Font glyph, like the icons `lsd` prints. Decorative: the text next to it carries the meaning.
+// The Mono font squeezes icons into one character cell, so they are scaled up visually; a transform
+// keeps the cell's width, so the text after an icon and the columns of a listing stay aligned. It
+// grows from the left edge so the line's write-in animation (which clips to the line) never cuts it.
+
+interface Props {
+	name: IconName;
+	class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+<span aria-hidden="true" class:list={["inline-block origin-[0_60%] scale-[1.3]", className]}>
+	{icons[name]}
+</span>

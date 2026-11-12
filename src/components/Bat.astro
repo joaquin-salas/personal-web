@@ -1,0 +1,22 @@
+---
+// The frame `cat` draws around a file, like `bat`: a header with the file name (plus anything in
+// the `header` slot), then the file rendered as Markdown in the default slot.
+
+interface Props {
+	file: string;
+}
+
+const { file } = Astro.props;
+---
+
+<div class="border-y border-rule">
+	<div class="space-y-[0.1em] border-b border-rule px-[1ch] py-[0.3em]">
+		<p class="ln">
+			<span class="text-muted">File:</span> <span class="font-bold">{file}</span>
+		</p>
+		<slot name="header" />
+	</div>
+	<div class="px-[1ch] pt-[1em] pb-[1.1em]">
+		<slot />
+	</div>
+</div>

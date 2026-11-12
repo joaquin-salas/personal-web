@@ -1,0 +1,57 @@
+---
+import PowerButton from "@/components/PowerButton.astro";
+import Shell from "@/components/Shell.astro";
+import type { Window } from "@/components/StatusBar.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getFilesystem } from "@/lib/filesystem";
+
+// Every page is the same terminal: the whole window is a 70s screen. The session output scrolls
+// in a centred column; the prompt (Shell) stays fixed at the bottom. `boot` plays the power-on
+// sequence when a visitor arrives at the site (home page only). The `overlay` slot is for things
+// pinned to the screen, outside the scrolling output (the table of contents).
+
+interface Props {
+	title: string;
+	description: string;
+	/** The status line section to mark as current. */
+	window: Window;
+	/** Folder the prompt starts in, e.g. ["articles"]. */
+	cwd: string[];
+	boot?: boolean;
+}
+
+const { title, description, window, cwd, boot = false } = Astro.props;
+const fs = await getFilesystem();
+
+// Runs in <head> before the first paint and decides whether the boot animation plays (never for
+// reduced motion). It plays when the visitor arrives: from another site, a typed address or a
+// bookmark (the referrer is not this site), or a reload. It does not play when moving around the
+// site or going back and forward. `exit` and `reboot` ask for it with a one-time "reboot" flag.
+const bootScript = `try{(function(){
+var flag=false;try{flag=sessionStorage.getItem("reboot")==="1";sessionStorage.removeItem("reboot")}catch(e){}
+var nav=performance.getEntriesByType("navigation")[0];var type=nav?nav.type:"navigate";
+var internal=false;try{internal=!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}
+var arrived=type==="reload"||(type==="navigate"&&!internal);
+if((flag||arrived)&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.setAttribute("data-boot","");
+})()}catch(e){}`;
+---
+
+<BaseLayout title={title} description={description}>
+	{boot && <script is:inline slot="head" set:html={bootScript} />}
+	<div class="screen crt relative flex h-full flex-col">
+		<main
+			id="terminal-output"
+			class="scrollbar-terminal min-h-0 flex-1 overflow-y-auto pt-6 pr-[max(1rem,env(safe-area-inset-right))] pb-3 pl-[max(1rem,env(safe-area-inset-left))]"
+		>
+			<div id="terminal-log" role="log" aria-live="polite" class="mx-auto max-w-terminal">
+				<slot />
+			</div>
+		</main>
+		<Shell fs={fs} cwd={cwd} current={window} />
+		<slot name="overlay" />
+	</div>
+	<PowerButton />
+	<div class="power-light" aria-hidden="true"></div>
+	<div class="power-glow" aria-hidden="true"></div>
+	<div class="glass" aria-hidden="true"></div>
+</BaseLayout>

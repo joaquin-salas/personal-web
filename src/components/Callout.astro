@@ -9,8 +9,8 @@ interface Props {
 const { type } = Astro.props;
 
 const styles = {
-	note: { label: "Note", border: "border-accent", text: "text-accent" },
-	warning: { label: "Warning", border: "border-caution", text: "text-caution" },
+	note: { label: "Note", border: "border-blue", text: "text-blue" },
+	warning: { label: "Warning", border: "border-yellow", text: "text-yellow" },
 }[type];
 ---
 
@@ -21,8 +21,6 @@ const styles = {
 		styles.border,
 	]}
 >
-	<p class:list={["not-prose mb-2 font-display text-base font-semibold", styles.text]}>
-		{styles.label}
-	</p>
+	<p class:list={["not-prose mb-2 font-bold", styles.text]}>{styles.label}</p>
 	<slot />
 </div>

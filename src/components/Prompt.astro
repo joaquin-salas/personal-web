@@ -1,0 +1,30 @@
+---
+// A shell prompt, `joaquin@salas:~$`, followed by the command that was run. Purely visual: each
+// command's section has its own heading for screen readers. `boot` makes the command type itself
+// during the boot sequence (see the boot rules in global.css).
+
+interface Props {
+	/** Working directory, e.g. "~" or "~/articles". */
+	cwd: string;
+	command: string;
+	boot?: boolean;
+}
+
+const { cwd, command, boot = false } = Astro.props;
+---
+
+<p aria-hidden="true" class="flex flex-wrap gap-x-[1ch]">
+	<span class="whitespace-nowrap">
+		<span class="font-bold text-green">joaquin@salas</span>:
+		<span class="font-bold text-blue">{cwd}</span>
+		<span class="text-accent">$</span>
+	</span>
+	{boot ? (
+		<span>
+			<span class="boot-typed">{command}</span>
+			<span class="boot-cursor" />
+		</span>
+	) : (
+		<span class="break-all">{command}</span>
+	)}
+</p>

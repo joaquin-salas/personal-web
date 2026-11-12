@@ -3,13 +3,16 @@
 Creative direction for the site's colour, typography and brand. Every design change checks against
 this file. Update it when the direction really changes, not when execution gets hard.
 
+The previous direction ("Almagra": warm paper, serif reading pages, a well-set book) was replaced
+on 2026-11-12. It lives in this file's git history.
+
 ## Project
 
 **Name:** joaquinsalas.dev
 
 **Description:** Personal site of Joaquín Salas, a Computer Engineering graduate and software
-engineer in Granada. A CV-style home page, write-ups of projects he has built, and technical
-articles about what he is learning (Kubernetes, Kafka, Raft...). Static, self-hosted, English only.
+engineer in Granada. A CV, write-ups of projects he has built, and technical articles about what he
+is learning (Kubernetes, Kafka, Raft...). Static, self-hosted, English only.
 
 **Target audience:** Tech recruiters and engineering managers hiring for a first full-time role.
 Engineers who arrive from an article are the secondary audience.
@@ -19,86 +22,101 @@ explains things clearly", and finds proof in the projects and articles. Success 
 
 ## The four axes
 
-### Tone register: Conversational
+### Tone register: Conversational, with a terminal accent
 
-First person and warm, like a thoughtful person talking. It makes a junior profile read as genuine
-instead of inflated.
+First person and warm. The terminal supplies the voice of the interface (prompts, command output,
+the odd joke from `sudo`), but the CV and articles still read like a person talking.
 
-### Aesthetic philosophy: Editorial restrained, reading-first
+### Aesthetic philosophy: A 70s terminal you can use, with modern icons
 
-Clean and minimal, with generous space, few colours and strong typography. The pages exist to be
-read, so legibility beats decoration every time.
+The whole window is the screen of a 70s terminal: white phosphor text on black, a thick blinking
+block cursor, a soft glow and faint scanlines. On it runs the modern CLI layer Joaquín actually
+uses: `lsd`-style icons and colours, `cat` with a `bat`-style frame around rendered Markdown,
+`neofetch` for the introduction, and rounded TUI panels with titles set into the border (like
+Claude Code or OpenCode). Mostly black and white; colour is an accent, not a theme. The icons are
+not decoration: they tell folders from files and articles from projects at a glance.
 
 ### Audience relationship: Peer
 
-"I'm figuring this out and sharing it." This matches articles about things he is learning, without
-overclaiming expertise.
+"This is how I use my computer; come in." It shows taste and real familiarity with Linux instead of
+claiming it.
 
-### Sensory ambition: Considered
+### Sensory ambition: Playful, but legible
 
-Readers notice the care in the type pairing, spacing and small details like the monogram, but the
-craft never gets between them and the text.
+The first visit is a small show: the screen powers on, `neofetch` types itself and its output writes
+itself in. After that everything is calm and readable, and the prompt really works.
 
 ## Synthesis
 
-This brief produces quiet, text-first pages that look like a well-set book more than an app. A
-warm off-white page, near-black ink and one accent colour carry everything. A refined serif sets
-long-form text; a clean sans handles names, headings and interface. The oversized name on the home
-page is the one bold gesture and the JS monogram is the signature. Granada survives only as an
-undertone in the warmth of the paper and ink, never as a theme.
-
-Each detail has a reason: comfortable line length, a clear type scale, visible focus, honest link
-styling. Nothing moves, glows or decorates. A recruiter skimming sees order and taste; an engineer
-reading an article never notices the design, only that it is easy to read.
+On the first visit of a session the screen powers on (a line of light opening into the picture),
+`neofetch` types itself at the prompt and the logo and panels write themselves in, in about two and
+a half seconds. Any key or click skips it; reduced motion never sees it. Then the prompt, fixed at
+the bottom of the screen, is ready: `help`, `ls`, `tree`, `cd`, `cat`, `open` and a few hidden ones.
+Nothing requires typing: every path in the output is clickable and types its command into the prompt
+before running it, a row of suggestions sits above the prompt, and the status line under it is the
+ordinary navigation. Articles and projects are real pages that open as `cat file.md`.
 
 ## Inspiration references
 
-- **brittanychiang.com**: layout. The sticky left column with name and nav, and the scrolling right
-  column with the CV. Calibrates structure, not visual style.
-- **leerob.com**: how far minimal can go. Text-first, almost no decoration. Calibrates aesthetic
-  philosophy.
-- **paco.me / rauno.me**: quiet, precise typography and tiny considered details. Calibrates
-  sensory ambition.
+- **A 70s terminal** (Fallout's terminals): the glow, the block cursor, the power-on. Calibrates the
+  mood, not realism.
+- **Claude Code, OpenCode**: TUI panels with rounded borders and titles, a prompt box at the bottom,
+  a quiet footer line, one warm accent. Calibrates the interface.
+- **lsd, bat, neofetch, tree**: how listings, files and the introduction are drawn. Calibrates the
+  detail layer.
 
 ## Rejection list
 
 This brief explicitly says no to:
 
-- The template dev-portfolio look: dark navy with a neon accent, gradient blobs, glassmorphism,
-  "Hi, I'm X 👋".
-- Chips, bordered cards, badges, tech-stack pills and skill bars. Lists are rows; stacks are plain
-  text.
-- Decorative motion: fade-ins, parallax, hover-lift, scroll effects.
-- Stock photos, stock illustrations and emoji as decoration.
-- More than one accent colour in the interface.
-- Granada as a visible theme (tile patterns, ornament). It stays an undertone.
+- A terminal you must type into. Every command's result must also be reachable by clicking.
+- A fake terminal in front of a normal site: the terminal _is_ the site, and real URLs still exist
+  for every page, rendered at build time.
+- A realistic emulator: photographic textures, screen curvature, reflections, heavy bloom.
+- CRT effects that hurt reading: flicker, strong scanlines, chromatic aberration, green or amber
+  monochrome.
+- Animations that make people wait: the boot plays only when someone arrives at the site, is skippable, and output from
+  later commands writes itself in a fraction of a second.
+- Recreating a specific product's look (a particular distro's branding or a named theme as-is).
+- The template dev-portfolio look: navy with neon, gradients, glassmorphism, "Hi, I'm X 👋".
+- Emoji as icons. Icons are Nerd Font glyphs, like `lsd`.
 
 ## Decisions already made
 
-- **Logo:** the JS monogram (`design/logo/`), always one colour, following `design/logo/USAGE.md`.
-- **Big name:** kept as the one bold element, refined to fit the new type system.
-- **Type direction:** serif for reading, sans for headings and UI, mono for code only.
-- **Palette: "Almagra"** (chosen 2026-10-25). Warm paper `#f7f4ee`, warm black ink `#1d1b18`,
-  muted `#655f57`, rule `#e7e1d6`, one accent: almagra clay red `#9e3b26` (links, focus). Contrast
-  on paper: ink 15.7, muted 5.8, accent 6.2. Ochre is retired; draft labels use muted.
-- **Typefaces** (chosen 2026-10-25): Bricolage Grotesque for the name, headings and UI (condensed
-  width for the big name); Literata for body and article text; JetBrains Mono for code.
-- **Reading layout** (chosen 2026-10-25): article text Literata 18px, line height 1.7. Single-column
-  pages are 48rem wide (about 92 characters per line), and the top bar, title and body share that
-  one column so they line up. The width is one token, so it is easy to change; if long lines get
-  tiring, try line height 1.75 before narrowing.
-- **Code** (chosen 2026-10-25): "Warm Almagra" syntax colours via Shiki's `css-variables` theme, so
-  they are tokens in `global.css` with light and dark values. Blocks sit on a slightly darker
-  paper (`#efe9df`) with no border; keywords and numbers almagra `#9e3b26`, strings olive
-  `#5f5a1f`, types slate `#3d5566`, comments muted italic `#6e665c`, the rest ink (all ≥ 4.5:1 on
-  the block). Inline code uses the same background, no backticks. Each block shows a small
-  language label from Astro's `data-language` attribute (CSS only). No copy button (needs JS).
-- **Theme** (dark mode added 2026-10-25): follows the OS by default; a two-state line-icon toggle
-  (moon/sun) in the top bar and next to the home links overrides it and is remembered. Dark
-  Almagra: paper `#171512`, ink `#ebe5da`, muted `#a59d91`, rule `#2f2b26`, accent `#e0826a`,
-  caution `#d4a24c`, code `#221f1b` (strings `#c2bb7a`, types `#93abbd`, comments `#9a9286`).
-  Transparent cover images get a light backing in dark mode.
+- **Logo:** the JS monogram (`design/logo/`). On the screen it appears as block art in the
+  `neofetch` output (`node design/logo/ascii.ts`); the SVG is the favicon.
+- **Typeface** (chosen 2026-11-12): Hack Nerd Font Mono for everything, text and icons, shipped as
+  subsets with only the glyphs used (`node design/fonts/build.ts`, about 47 KB per style).
+- **Screen** (chosen 2026-11-12, from the JS-77 prototype): the window is the screen. Output scrolls
+  in a centred column of 100 characters; suggestions, the prompt box and the status line are fixed
+  at the bottom.
+- **Glass:** a faint text glow, scanlines at 18% black every 3px, and a vignette.
+- **Boot:** power-on 850ms, `neofetch` typed from 950ms, output written line by line from 1450ms,
+  prompt ready at about 2.5s. Plays when a visitor arrives (not when moving around the site); skippable; off for reduced motion.
+- **Power key** (chosen 2026-11-12): top-right on every page, a key in the prompt box style with a
+  status light, green while on. It turns the screen off and leaves it dark with only the key lit
+  (red light, accent glow) until it or any key is pressed, which boots the home page.
+- **Commands:** `ls` is always the long view; `cat` reads files as rendered Markdown in a `bat`-style
+  frame (there is no `bat` command); articles and projects open as their own pages.
+- **Palette** (chosen 2026-11-12, all pass WCAG AA on the screen):
+
+  | Role       | Colour    | Contrast | Used for                                              |
+  | ---------- | --------- | -------- | ----------------------------------------------------- |
+  | background | `#0b0b0a` | —        | Screen                                                |
+  | ink        | `#ebe9e4` | 16.2     | Text: white phosphor                                  |
+  | muted      | `#8e8b85` | 5.8      | Dates, descriptions, tree lines, gutters, status line |
+  | rule       | `#3a3835` | —        | Panel borders, dividers, the `cat` frame              |
+  | accent     | `#e0826a` | 7.1      | Almagra: prompt `$`, logo, panel titles, headings     |
+  | green      | `#9fbf6a` | 9.5      | `joaquin@salas` in the prompt                         |
+  | yellow     | `#d9b25c` | 9.8      | Markdown file icons, featured star, warnings          |
+  | blue       | `#7fa6d4` | 7.8      | Directories, notes                                    |
+  | cyan       | `#79bfb5` | 9.3      | Links                                                 |
+
+  The accent keeps the old Almagra red, so Granada survives as an undertone.
+
+- **Dark only, for now.** A `theme` command with alternative palettes comes later.
 
 ## Open questions
 
-- None right now.
+- The CV documents (`about.md`, `experience.md`, `education.md`) only exist inside the terminal, so
+  search engines see the neofetch summary but not their full text.

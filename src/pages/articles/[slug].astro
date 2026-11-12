@@ -16,7 +16,7 @@ const { article } = Astro.props;
 const { Content, headings } = await render(article);
 ---
 
-<ProseLayout {...article.data} headings={headings}>
+<ProseLayout {...article.data} headings={headings} folder="articles" slug={article.id}>
 	<TagList slot="meta" tags={article.data.tags} label="Tags" />
 	<Content />
 </ProseLayout>
