@@ -7,7 +7,7 @@ WORKDIR /app
 # Corepack installs the pnpm version pinned in package.json's "packageManager".
 RUN corepack enable
 # Dependencies first, so this layer is reused until package.json or the lockfile change.
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build

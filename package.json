@@ -14,19 +14,19 @@
 		"astro": "astro"
 	},
 	"dependencies": {
-		"@astrojs/markdown-satteri": "^0.4.5",
-		"@astrojs/mdx": "^8.1.1",
-		"@tailwindcss/vite": "^4.3.3",
-		"astro": "^7.4.0",
-		"tailwindcss": "^4.3.3"
+		"@astrojs/markdown-satteri": "^0.4.8",
+		"@astrojs/mdx": "^8.1.4",
+		"@tailwindcss/vite": "^4.3.5",
+		"astro": "^7.4.10",
+		"tailwindcss": "^4.3.5"
 	},
 	"packageManager": "pnpm@12.14.0+sha512.c18ba6d87993d3d164cb5e8948f32b2c06ee854487e06cd8d86781342fb3e5bb4634367034711e86802baa9c37bea906ce1929ad08d70884c97d801df13389a6",
 	"devDependencies": {
-		"@astrojs/check": "^0.9.10",
+		"@astrojs/check": "^0.9.12",
 		"@tailwindcss/typography": "^0.5.20",
 		"@types/node": "^22.20.5",
-		"prettier": "^3.9.10",
-		"prettier-plugin-astro": "^1.1.1",
+		"prettier": "^3.10.0",
+		"prettier-plugin-astro": "^1.1.2",
 		"subset-font": "^2.9.0",
 		"typescript": "^6.0.3"
 	}

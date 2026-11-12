@@ -1,0 +1,6 @@
+# pnpm settings (not a monorepo).
+overrides:
+  # @tailwindcss/typography 0.5.20 pins 6.0.10, which has a moderate advisory
+  # (GHSA: quadratic selector parsing). 6.1.x is the same major. Remove this once
+  # typography depends on >=6.1.5 itself.
+  "@tailwindcss/typography>postcss-selector-parser": "^6.1.6"
