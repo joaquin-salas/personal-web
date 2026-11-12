@@ -14,6 +14,11 @@ RUN pnpm build
 
 # Runtime stage: nginx as a non-root user, listening on 8080.
 FROM nginxinc/nginx-unprivileged:stable-alpine
+# Alpine often publishes security fixes (curl, zlib, musl…) before the nginx image is rebuilt with
+# them, so install them at build time. The base image runs as user 101; switch back to it after.
+USER root
+RUN apk upgrade --no-cache
+USER 101
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 8080
