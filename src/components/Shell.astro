@@ -661,7 +661,9 @@ const data = JSON.stringify({ fs, contact }).replace(/</g, "\\u003c");
 	// animation. Any key or click skips to the end; the attribute goes when it is over.
 
 	if (root.hasAttribute("data-boot")) {
-		const end = parseInt(getComputedStyle(root).getPropertyValue("--boot-end"), 10) || 2750;
+		// The minifier may rewrite the CSS time ("2750ms" becomes "2.75s"), so read both units.
+		const value = getComputedStyle(root).getPropertyValue("--boot-end").trim();
+		const end = parseFloat(value) * (value.endsWith("ms") ? 1 : 1000) || 2750;
 		const finish = () => {
 			clearTimeout(timer);
 			root.removeAttribute("data-boot");
